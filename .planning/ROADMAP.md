@@ -29,15 +29,16 @@ Professional stocker heifer business plan web app with live financials, charts, 
 
 **Milestone Goal:** Elevate admin experience and visual polish to match the professional quality of the public-facing plan pages.
 
-#### Phase 9: Public Page Design Polish
+#### Phase 9: Public Page Design Polish — Complete
 
 **Goal**: Refine typography, spacing, and visual hierarchy on public plan pages for a more polished presentation
 **Depends on**: Previous milestone complete
 **Research**: Unlikely (internal Tailwind patterns)
-**Plans**: TBD
+**Plans**: 2
 
 Plans:
-- [ ] 09-01: TBD (run /gsd:plan-phase 9 to break down)
+- [x] 09-01: Cover Header & Section Spacing
+- [x] 09-02: Tables, Cards & Chart Polish
 
 #### Phase 10: Print & PDF Polish
 
@@ -91,7 +92,7 @@ Plans:
 | 6. Public Plan Pages | v1.0 | 3/3 | Complete | 2026-02-10 |
 | 7. Charts & Visualizations | v1.0 | 2/2 | Complete | 2026-02-10 |
 | 8. Print Optimization & Deployment | v1.0 | 2/2 | Complete | 2026-02-10 |
-| 9. Public Page Design Polish | v1.1 | 0/? | Not started | - |
+| 9. Public Page Design Polish | v1.1 | 2/2 | Complete | 2026-02-10 |
 | 10. Print & PDF Polish | v1.1 | 0/? | Not started | - |
 | 11. Admin Config Form UX | v1.1 | 0/? | Not started | - |
 | 12. Admin Dashboard & Navigation | v1.1 | 0/? | Not started | - |
