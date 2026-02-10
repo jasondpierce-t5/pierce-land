@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Professional presentation that looks polished to bankers
-**Current focus:** Phase 4 — Bank Version Management
+**Current focus:** Phase 5 — Financial Calculations Engine
 
 ## Current Position
 
 Phase: 4 of 8 (Bank Version Management)
-Plan: 04-01 complete
-Status: Phase 4 in progress — 1 plan complete
-Last activity: 2026-02-10 — Plan 04-01 complete (Bank Version API)
+Plan: 04-02 complete
+Status: Phase 4 complete — Ready for Phase 5 (Financial Calculations Engine)
+Last activity: 2026-02-10 — Plan 04-02 complete (Bank Version Admin UI)
 
-Progress: ▓▓▓▓░░░░░░ 37.5% (3/8 phases complete, Phase 4 in progress)
+Progress: ▓▓▓▓▓░░░░░ 50% (4/8 phases complete, Phase 4 complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 10.4 min
-- Total execution time: 0.87 hours
+- Total plans completed: 6
+- Average duration: 11.7 min
+- Total execution time: 1.17 hours
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: ▓▓▓▓░░░░░░ 37.5% (3/8 phases complete, Phase 4 in 
 | 01-foundation-database | 2 | 19 min | 9.5 min |
 | 02-admin-auth | 1 | 13 min | 13 min |
 | 03-shared-config-mgmt | 1 | 8 min | 8 min |
-| 04-bank-version-mgmt | 1 | 12 min | 12 min |
+| 04-bank-version-mgmt | 2 | 18 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 13min, 8min, 12min
-- Trend: Consistent velocity (8-13 min recent average)
+- Last 5 plans: 13min, 8min, 12min, 6min
+- Trend: Excellent velocity (6-13 min recent average)
 
 ## Accumulated Context
 
@@ -77,6 +77,14 @@ Recent decisions affecting current work:
 5. generateSlug utility without external dependencies — pure TypeScript for bundle size control
 6. PATCH allows partial updates — flexible API reduces payload size
 
+**From Plan 04-02 (Bank Version Admin UI):**
+1. Override count display in list (not individual values) — keeps table compact and scannable
+2. Real-time slug auto-generation on create, manual override allowed — reduces manual work with flexibility
+3. Edit form preserves slug when bank name changes — protects existing URLs and routing
+4. Checkbox toggles control custom value input visibility — explicit "use default" vs "custom value" decision
+5. Default value display with graceful fallback — shows users what defaults they're accepting
+6. Success redirects use URL params pattern (?success=created) — RESTful pattern with transient messaging
+
 ### Deferred Issues
 
 None yet.
@@ -88,8 +96,8 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Plan 04-01 complete — Bank Version API with CRUD operations and slug generation
-Resume file: .planning/phases/04-bank-version-mgmt/04-01-SUMMARY.md
-Next: Phase 4 — Continue with Bank Version UI
+Stopped at: Plan 04-02 complete — Bank Version Admin UI with list, create, and edit forms
+Resume file: .planning/phases/04-bank-version-mgmt/04-02-SUMMARY.md
+Next: Phase 5 — Financial Calculations Engine
 
-**Phase 4 in progress.** Bank version API complete with comprehensive validation, slug generation utility, and soft delete. Ready for admin UI.
+**Phase 4 Complete!** Bank version management fully functional with API and admin UI. Navigation links fixed. Ready for calculation engine implementation.
