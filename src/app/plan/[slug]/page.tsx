@@ -385,7 +385,140 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Business plan sections added by Plan 06-02 and 06-03 */}
+        {/* ================================================================= */}
+        {/* Annual Projections                                              */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Annual Projections
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+            <div className="grid md:grid-cols-3 gap-4">
+              {/* Spring Net Total */}
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500 mb-1">Spring</p>
+                <p
+                  className={`text-xl font-bold ${
+                    annual.springTotal >= 0 ? 'text-green-700' : 'text-red-600'
+                  }`}
+                >
+                  {formatCurrencyWhole(annual.springTotal)}
+                </p>
+              </div>
+
+              {/* Winter Net Total */}
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500 mb-1">Winter</p>
+                <p
+                  className={`text-xl font-bold ${
+                    annual.winterTotal >= 0 ? 'text-green-700' : 'text-red-600'
+                  }`}
+                >
+                  {formatCurrencyWhole(annual.winterTotal)}
+                </p>
+              </div>
+
+              {/* Annual Net Income */}
+              <div className="bg-gray-50 rounded-lg p-4 text-center border-2 border-accent/20">
+                <p className="text-sm text-gray-500 mb-1">Annual Net Income</p>
+                <p
+                  className={`text-2xl font-bold ${
+                    annual.annualNetIncome >= 0 ? 'text-accent' : 'text-red-600'
+                  }`}
+                >
+                  {formatCurrencyWhole(annual.annualNetIncome)}
+                </p>
+              </div>
+
+              {/* Total Revenue */}
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500 mb-1">Total Revenue</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {formatCurrencyWhole(annual.totalRevenue)}
+                </p>
+              </div>
+
+              {/* Total Investment */}
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500 mb-1">Total Investment</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {formatCurrencyWhole(annual.totalInvestment)}
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-4 text-sm text-gray-500">
+              Based on {formatNumber(config.head_count)} head
+            </p>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Credit Structure                                                 */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Credit Structure
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+            {/* Key Metrics Row */}
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div className="text-center">
+                <p className="text-sm text-gray-500 mb-1">Line of Credit</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {formatCurrencyWhole(config.loc_amount)}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-500 mb-1">Interest Rate</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {formatPercent(config.interest_rate_pct)}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-500 mb-1">Capital Required</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {formatCurrencyWhole(annual.totalInvestment)}
+                </p>
+              </div>
+            </div>
+
+            {/* LOC Utilization Bar */}
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                LOC Utilization: {formatPercent(annual.locUtilization)}
+              </p>
+
+              {/* Progress bar */}
+              <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-4 rounded-full transition-all ${
+                    annual.locUtilization > 100
+                      ? 'bg-red-500'
+                      : annual.locUtilization >= 80
+                        ? 'bg-amber-500'
+                        : 'bg-green'
+                  }`}
+                  style={{ width: `${Math.min(annual.locUtilization, 100)}%` }}
+                />
+              </div>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Remaining Capacity: {formatCurrencyWhole(annual.locCapacityRemaining)}
+              </p>
+
+              {annual.locUtilization > 100 && (
+                <p className="mt-2 text-sm font-medium text-red-600">
+                  Warning: Capital required exceeds line of credit
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Additional sections added by Plan 06-03 */}
       </div>
     </div>
   );
