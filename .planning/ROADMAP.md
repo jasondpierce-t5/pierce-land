@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Database** - Project setup, Supabase schema, seed data
 - [x] **Phase 2: Admin Authentication & Layout** - Password gate, dashboard structure
-- [ ] **Phase 3: Shared Config Management** - Market prices and operational params interface
+- [x] **Phase 3: Shared Config Management** - Market prices and operational params interface
 - [ ] **Phase 4: Bank Version Management** - Create/edit bank-specific plans with overrides
 - [ ] **Phase 5: Financial Calculations Engine** - Core calc logic, scenarios, sensitivity analysis
 - [ ] **Phase 6: Public Plan Pages** - Dynamic routing and plan rendering
@@ -50,19 +50,19 @@ Plans:
 **Goal**: Admin interface to edit market prices, feed costs, weights, ADG, and operational parameters
 **Depends on**: Phase 2
 **Research**: Unlikely (CRUD operations on plan_config table, standard form handling)
-**Plans**: TBD
+**Plans**: 1 (complete)
 
 Plans:
-- [ ] TBD during phase planning
+- [x] **03-01**: Config CRUD Interface (API routes and admin form) — Complete
 
 ### Phase 4: Bank Version Management
 **Goal**: Create, edit, and deactivate bank-specific plans with optional overrides
 **Depends on**: Phase 3
 **Research**: Unlikely (Database operations, slug generation is standard practice)
-**Plans**: TBD
+**Plans**: 1+ (in progress)
 
 Plans:
-- [ ] TBD during phase planning
+- [x] **04-01**: Bank Version API (CRUD endpoints, slug generation, validation) — Complete
 
 ### Phase 5: Financial Calculations Engine
 **Goal**: Complete calculation logic for all financial projections and sensitivity analysis
@@ -111,8 +111,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Foundation & Database | 2/2 | Complete | 2026-02-09 |
 | 2. Admin Authentication & Layout | 1/1 | Complete | 2026-02-10 |
-| 3. Shared Config Management | 0/TBD | Not started | - |
-| 4. Bank Version Management | 0/TBD | Not started | - |
+| 3. Shared Config Management | 1/1 | Complete | 2026-02-10 |
+| 4. Bank Version Management | 1/TBD | In progress | - |
 | 5. Financial Calculations Engine | 0/TBD | Not started | - |
 | 6. Public Plan Pages | 0/TBD | Not started | - |
 | 7. Charts & Visualizations | 0/TBD | Not started | - |
