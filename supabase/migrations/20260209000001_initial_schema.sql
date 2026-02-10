@@ -46,3 +46,32 @@ CREATE TRIGGER update_plan_config_updated_at
   BEFORE UPDATE ON plan_config
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
+
+-- =============================================================================
+-- plan_versions table: Bank-specific plans with optional overrides
+-- =============================================================================
+
+CREATE TABLE plan_versions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+
+  -- Bank identification
+  slug text UNIQUE NOT NULL,  -- URL identifier (e.g., 'cameron', 'first-national')
+  bank_name text NOT NULL,
+  is_active boolean NOT NULL DEFAULT true,
+
+  -- Optional overrides (null = use value from plan_config)
+  override_loc_amount numeric,
+  override_interest_rate_pct numeric,
+  override_head_count integer
+);
+
+-- Index on slug for fast lookups
+CREATE INDEX plan_versions_slug_idx ON plan_versions (slug);
+
+-- Auto-update updated_at timestamp
+CREATE TRIGGER update_plan_versions_updated_at
+  BEFORE UPDATE ON plan_versions
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
