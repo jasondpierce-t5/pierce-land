@@ -14,6 +14,7 @@ import type {
   WinterTurnResult,
   AnnualProjection,
   ScenarioAnalysis,
+  HaySensitivityTable,
 } from './types';
 
 // =============================================================================
@@ -354,4 +355,43 @@ export function calculateScenarios(config: PlanConfig): ScenarioAnalysis {
       annualNet: highAnnual,
     },
   };
+}
+
+// =============================================================================
+// Hay price sensitivity
+// =============================================================================
+
+/**
+ * Calculate hay price sensitivity for winter turn.
+ * Shows how winter profitability changes across hay price range.
+ * Default range: $40 to $80 per bale in $10 increments (from project.md).
+ */
+export function calculateHaySensitivity(
+  config: PlanConfig,
+  minPrice: number = 40,
+  maxPrice: number = 80,
+  increment: number = 10
+): HaySensitivityTable {
+  const results: HaySensitivityTable = [];
+  const headCount = config.head_count;
+
+  for (let hayPrice = minPrice; hayPrice <= maxPrice; hayPrice += increment) {
+    // Create modified config with custom hay price
+    const modifiedConfig = {
+      ...config,
+      hay_price_per_bale: hayPrice,
+    };
+
+    // Recalculate winter turn with modified hay price
+    const winterResult = calculateWinterTurn(modifiedConfig);
+
+    results.push({
+      hayPricePerBale: hayPrice,
+      totalFeedCost: winterResult.totalFeedCost,
+      winterNetPerHead: winterResult.netIncome,
+      winterNetTotal: winterResult.netIncome * headCount,
+    });
+  }
+
+  return results;
 }

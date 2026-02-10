@@ -161,3 +161,22 @@ export interface ScenarioAnalysis {
   mid: ScenarioResult;
   high: ScenarioResult;
 }
+
+// =============================================================================
+// Hay sensitivity types
+// =============================================================================
+
+/**
+ * Single data point in the hay price sensitivity analysis.
+ */
+export interface HaySensitivityPoint {
+  hayPricePerBale: number;
+  totalFeedCost: number;
+  winterNetPerHead: number;
+  winterNetTotal: number;
+}
+
+/**
+ * Array of hay sensitivity data points for chart generation.
+ */
+export type HaySensitivityTable = HaySensitivityPoint[];
