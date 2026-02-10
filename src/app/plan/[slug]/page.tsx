@@ -96,7 +96,7 @@ export default async function PlanPage({ params }: PageProps) {
     notFound();
   }
 
-  const { version, config, spring, winter, annual } = data;
+  const { version, config, spring, winter, annual, scenarios, breakeven, worstCase, haySensitivity, purchaseSensitivity } = data;
 
   // Format the current date as "Month Year"
   const currentDate = new Date().toLocaleDateString('en-US', {
@@ -518,7 +518,134 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Additional sections added by Plan 06-03 */}
+        {/* ================================================================= */}
+        {/* Scenario Analysis                                              */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Scenario Analysis
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Metric</th>
+                    <th className="text-right py-3 px-4 font-semibold bg-red-50 text-red-700">Low</th>
+                    <th className="text-right py-3 px-4 font-semibold bg-gray-50 text-gray-700">Mid</th>
+                    <th className="text-right py-3 px-4 font-semibold bg-green-50 text-green-700">High</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t border-gray-100">
+                    <td className="py-3 px-4 text-gray-600">Sale Price</td>
+                    <td className="py-3 px-4 text-right text-red-600">{formatCwt(scenarios.low.salePriceCwt)}</td>
+                    <td className="py-3 px-4 text-right text-gray-900">{formatCwt(scenarios.mid.salePriceCwt)}</td>
+                    <td className="py-3 px-4 text-right text-green-600">{formatCwt(scenarios.high.salePriceCwt)}</td>
+                  </tr>
+                  <tr className="border-t border-gray-100 bg-gray-50/50">
+                    <td className="py-3 px-4 text-gray-600">Spring Net/Head</td>
+                    <td className="py-3 px-4 text-right text-red-600">{formatCurrency(scenarios.low.springNet)}</td>
+                    <td className="py-3 px-4 text-right text-gray-900">{formatCurrency(scenarios.mid.springNet)}</td>
+                    <td className="py-3 px-4 text-right text-green-600">{formatCurrency(scenarios.high.springNet)}</td>
+                  </tr>
+                  <tr className="border-t border-gray-100">
+                    <td className="py-3 px-4 text-gray-600">Winter Net/Head</td>
+                    <td className="py-3 px-4 text-right text-red-600">{formatCurrency(scenarios.low.winterNet)}</td>
+                    <td className="py-3 px-4 text-right text-gray-900">{formatCurrency(scenarios.mid.winterNet)}</td>
+                    <td className="py-3 px-4 text-right text-green-600">{formatCurrency(scenarios.high.winterNet)}</td>
+                  </tr>
+                  <tr className="border-t-2 border-gray-300 font-bold">
+                    <td className="py-3 px-4 text-gray-900">Annual Net Income</td>
+                    <td className="py-3 px-4 text-right text-red-600">{formatCurrencyWhole(scenarios.low.annualNet)}</td>
+                    <td className="py-3 px-4 text-right text-gray-900">{formatCurrencyWhole(scenarios.mid.annualNet)}</td>
+                    <td className="py-3 px-4 text-right text-green-600">{formatCurrencyWhole(scenarios.high.annualNet)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p className="mt-4 text-sm text-gray-500">
+              Annual figures based on {formatNumber(config.head_count)} head
+            </p>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Breakeven Analysis                                               */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Breakeven Analysis
+          </h2>
+
+          <div className="mt-4 grid md:grid-cols-2 gap-4">
+            <div className="bg-white shadow-sm rounded-lg p-6 text-center">
+              <p className="text-sm text-gray-500">Spring Turn Breakeven</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">
+                {formatCwt(breakeven.springBreakeven)}
+              </p>
+            </div>
+            <div className="bg-white shadow-sm rounded-lg p-6 text-center">
+              <p className="text-sm text-gray-500">Winter Turn Breakeven</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">
+                {formatCwt(breakeven.winterBreakeven)}
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-3 text-sm text-gray-500 italic">
+            Minimum sale price per cwt required to cover all costs
+          </p>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Worst-Case Scenario                                              */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Worst-Case Scenario
+          </h2>
+
+          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-6">
+            <p className="text-gray-700">{worstCase.description}</p>
+
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-2 mt-4">
+              <div className="flex justify-between py-2">
+                <span className="text-gray-600">Purchase Price</span>
+                <span className="font-medium text-gray-900">{formatCwt(worstCase.purchasePriceCwt)}</span>
+              </div>
+              <div className="flex justify-between py-2">
+                <span className="text-gray-600">Sale Price</span>
+                <span className="font-medium text-gray-900">{formatCwt(worstCase.salePriceCwt)}</span>
+              </div>
+              <div className="flex justify-between py-2">
+                <span className="text-gray-600">Spring Net/Head</span>
+                <span className={`font-medium ${worstCase.springNet >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                  {formatCurrency(worstCase.springNet)}
+                </span>
+              </div>
+              <div className="flex justify-between py-2">
+                <span className="text-gray-600">Winter Net/Head</span>
+                <span className={`font-medium ${worstCase.winterNet >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                  {formatCurrency(worstCase.winterNet)}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-amber-200">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-900 font-bold text-xl">Annual Net Impact</span>
+                <span className={`text-xl font-bold ${worstCase.annualNet >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                  {formatCurrencyWhole(worstCase.annualNet)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Additional sections added by Plan 06-03 Task 2 */}
       </div>
     </div>
   );
