@@ -1,3 +1,75 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =============================================================================
+   Print Stylesheet
+   Purpose: Produce clean, professional PDFs via browser print-to-PDF
+   for ag lending officers and bank presentations.
+   ============================================================================= */
+
+@media print {
+  /* --- Page Setup --- */
+  @page {
+    margin: 0.75in 0.5in;
+    size: letter;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    color: #1a1a1a;
+    font-size: 11pt;
+    line-height: 1.4;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* --- Element Visibility --- */
+  .no-print {
+    display: none !important;
+  }
+
+  /* --- Page Breaks --- */
+  .print-break-before {
+    page-break-before: always;
+  }
+
+  .print-no-break {
+    page-break-inside: avoid;
+  }
+
+  /* --- Visual Cleanup --- */
+  * {
+    box-shadow: none !important;
+  }
+
+  /* --- Chart Handling --- */
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+
+  /* Chart wrapper divs — prevent splitting across pages */
+  .print-no-break canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+
+  /* --- Typography --- */
+  h1 {
+    font-size: 18pt;
+  }
+
+  h2 {
+    font-size: 15pt;
+  }
+
+  h3 {
+    font-size: 13pt;
+  }
+
+  h4 {
+    font-size: 12pt;
+  }
+}
