@@ -9,6 +9,11 @@ import {
   formatWeight,
   formatCwt,
 } from '@/lib/formatters';
+import ScenarioChart from '@/components/charts/ScenarioChart';
+import BreakevenChart from '@/components/charts/BreakevenChart';
+import CostBreakdownChart from '@/components/charts/CostBreakdownChart';
+import HaySensitivityChart from '@/components/charts/HaySensitivityChart';
+import PurchaseSensitivityChart from '@/components/charts/PurchaseSensitivityChart';
 
 // =============================================================================
 // Metadata
@@ -320,6 +325,22 @@ export default async function PlanPage({ params }: PageProps) {
             />
             <TableRow label="Cost of Gain" value={formatCwt(spring.costOfGain * 100)} />
           </div>
+
+          {/* Spring Cost Breakdown Chart */}
+          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Spring Turn Cost Breakdown</h4>
+            <CostBreakdownChart
+              title="Spring Turn Cost Breakdown"
+              segments={[
+                { label: 'Purchase Cost', value: spring.purchaseCost },
+                { label: 'Interest', value: spring.interestCost },
+                { label: 'Death Loss', value: spring.deathLoss },
+                { label: 'Health', value: config.spring_health_cost_per_head },
+                { label: 'Freight', value: config.spring_freight_in_per_head + config.spring_freight_out_per_head },
+                { label: 'Other', value: config.spring_mineral_cost_per_head + config.spring_lrp_premium_per_head + config.spring_marketing_commission_per_head + config.spring_misc_per_head },
+              ]}
+            />
+          </div>
         </section>
 
         {/* ================================================================= */}
@@ -382,6 +403,23 @@ export default async function PlanPage({ params }: PageProps) {
               positive={winter.netIncome >= 0}
             />
             <TableRow label="Cost of Gain" value={formatCwt(winter.costOfGain * 100)} />
+          </div>
+
+          {/* Winter Cost Breakdown Chart */}
+          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Winter Turn Cost Breakdown</h4>
+            <CostBreakdownChart
+              title="Winter Turn Cost Breakdown"
+              segments={[
+                { label: 'Purchase Cost', value: winter.purchaseCost },
+                { label: 'Interest', value: winter.interestCost },
+                { label: 'Death Loss', value: winter.deathLoss },
+                { label: 'Feed Costs', value: winter.totalFeedCost },
+                { label: 'Health', value: config.winter_health_cost_per_head },
+                { label: 'Freight', value: config.winter_freight_in_per_head + config.winter_freight_out_per_head },
+                { label: 'Other', value: config.winter_mineral_cost_per_head + config.winter_lrp_premium_per_head + config.winter_marketing_commission_per_head + config.winter_misc_per_head },
+              ]}
+            />
           </div>
         </section>
 
@@ -570,6 +608,12 @@ export default async function PlanPage({ params }: PageProps) {
               Annual figures based on {formatNumber(config.head_count)} head
             </p>
           </div>
+
+          {/* Scenario Chart */}
+          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Scenario Comparison</h4>
+            <ScenarioChart scenarios={scenarios} />
+          </div>
         </section>
 
         {/* ================================================================= */}
@@ -598,6 +642,16 @@ export default async function PlanPage({ params }: PageProps) {
           <p className="mt-3 text-sm text-gray-500 italic">
             Minimum sale price per cwt required to cover all costs
           </p>
+
+          {/* Breakeven Chart */}
+          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Breakeven vs Market Price</h4>
+            <BreakevenChart
+              springBreakeven={breakeven.springBreakeven}
+              winterBreakeven={breakeven.winterBreakeven}
+              currentMarketPrice={config.market_price_850lb}
+            />
+          </div>
         </section>
 
         {/* ================================================================= */}
@@ -700,6 +754,15 @@ export default async function PlanPage({ params }: PageProps) {
               </table>
             </div>
           </div>
+
+          {/* Hay Sensitivity Chart */}
+          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Hay Price Impact on Winter Net</h4>
+            <HaySensitivityChart
+              data={haySensitivity}
+              currentHayPrice={config.hay_price_per_bale}
+            />
+          </div>
         </section>
 
         {/* ================================================================= */}
@@ -756,6 +819,15 @@ export default async function PlanPage({ params }: PageProps) {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Purchase Sensitivity Chart */}
+          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Purchase Price Impact on Annual Net</h4>
+            <PurchaseSensitivityChart
+              data={purchaseSensitivity}
+              currentPurchasePrice={config.market_price_500lb}
+            />
           </div>
         </section>
 
