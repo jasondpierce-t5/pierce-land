@@ -92,10 +92,11 @@ Plans:
 **Depends on**: Phase 5
 **Research**: Likely (Chart.js integration with React/Next.js)
 **Research topics**: Chart.js React integration patterns, responsive chart configuration, SSR compatibility with Chart.js
-**Plans**: TBD
+**Plans**: 2
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] **07-01**: Chart.js Setup + Chart Components (install packages, config, ScenarioChart, BreakevenChart, CostBreakdownChart, HaySensitivityChart, PurchaseSensitivityChart)
+- [ ] **07-02**: Page Integration + Visual Verification (integrate charts into plan page, human verify)
 
 ### Phase 8: Print Optimization & Deployment
 **Goal**: Print-to-PDF functionality polished, app deployed to piercelandandcattle.com
@@ -120,5 +121,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 4. Bank Version Management | 2/2 | Complete | 2026-02-10 |
 | 5. Financial Calculations Engine | 3/3 | Complete | 2026-02-10 |
 | 6. Public Plan Pages | 3/3 | Complete | 2026-02-10 |
-| 7. Charts & Visualizations | 0/TBD | Not started | - |
+| 7. Charts & Visualizations | 0/2 | Planned | - |
 | 8. Print Optimization & Deployment | 0/TBD | Not started | - |
