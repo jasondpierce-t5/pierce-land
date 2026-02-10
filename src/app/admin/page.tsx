@@ -34,7 +34,7 @@ export default function AdminDashboardPage() {
             Create and manage bank-specific plan versions with custom loan structures, terms, and approval requirements.
           </p>
           <a
-            href="/admin/banks"
+            href="/admin/versions"
             className="text-green hover:text-green/80 font-medium"
           >
             Manage Versions →

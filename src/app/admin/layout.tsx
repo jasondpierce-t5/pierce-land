@@ -25,7 +25,7 @@ export default function AdminLayout({
   const navLinks = [
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/config', label: 'Shared Config' },
-    { href: '/admin/banks', label: 'Bank Versions' },
+    { href: '/admin/versions', label: 'Bank Versions' },
   ];
 
   const isActive = (href: string) => {
