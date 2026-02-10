@@ -31,10 +31,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Goal**: Next.js project initialized with Supabase connected and database schema deployed
 **Depends on**: Nothing (first phase)
 **Research**: Unlikely (Next.js and Supabase setup follow established patterns)
-**Plans**: TBD
+**Plans**: 2+ (in progress)
 
 Plans:
-- [ ] TBD during phase planning
+- [x] **01-01**: Project Initialization (Next.js 14 + TypeScript + Tailwind + Supabase) — Complete
+- [ ] **01-02**: Database Schema Deployment (plan_config and plan_versions tables) — Pending
 
 ### Phase 2: Admin Authentication & Layout
 **Goal**: Protected admin dashboard with navigation structure
@@ -108,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Database | 0/TBD | Not started | - |
+| 1. Foundation & Database | 1/2+ | In progress | - |
 | 2. Admin Authentication & Layout | 0/TBD | Not started | - |
 | 3. Shared Config Management | 0/TBD | Not started | - |
 | 4. Bank Version Management | 0/TBD | Not started | - |
