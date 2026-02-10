@@ -645,7 +645,135 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Additional sections added by Plan 06-03 Task 2 */}
+        {/* ================================================================= */}
+        {/* Hay Price Sensitivity                                           */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Hay Price Sensitivity
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Hay Price/Bale</th>
+                    <th className="text-right py-3 px-4 font-semibold text-gray-700">Total Feed Cost</th>
+                    <th className="text-right py-3 px-4 font-semibold text-gray-700">Winter Net/Head</th>
+                    <th className="text-right py-3 px-4 font-semibold text-gray-700">Winter Net Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {haySensitivity.map((point, idx) => {
+                    const isCurrentConfig = point.hayPricePerBale === config.hay_price_per_bale;
+                    return (
+                      <tr
+                        key={idx}
+                        className={
+                          isCurrentConfig
+                            ? 'bg-accent/10 border-l-2 border-accent'
+                            : idx % 2 === 0
+                              ? 'bg-gray-50'
+                              : ''
+                        }
+                      >
+                        <td className="py-3 px-4 text-gray-900">
+                          {formatCurrency(point.hayPricePerBale)}
+                          {isCurrentConfig && (
+                            <span className="ml-2 text-xs font-medium text-accent">(current)</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-right text-gray-900">
+                          {formatCurrency(point.totalFeedCost)}
+                        </td>
+                        <td className={`py-3 px-4 text-right ${point.winterNetPerHead >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                          {formatCurrency(point.winterNetPerHead)}
+                        </td>
+                        <td className={`py-3 px-4 text-right font-medium ${point.winterNetTotal >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                          {formatCurrencyWhole(point.winterNetTotal)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Purchase Price Sensitivity                                       */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Purchase Price Sensitivity
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Purchase Price/CWT</th>
+                    <th className="text-right py-3 px-4 font-semibold text-gray-700">Spring Net/Head</th>
+                    <th className="text-right py-3 px-4 font-semibold text-gray-700">Winter Net/Head</th>
+                    <th className="text-right py-3 px-4 font-semibold text-gray-700">Annual Net</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {purchaseSensitivity.map((point, idx) => {
+                    const isCurrentConfig = point.purchasePriceCwt === config.market_price_500lb;
+                    return (
+                      <tr
+                        key={idx}
+                        className={
+                          isCurrentConfig
+                            ? 'bg-accent/10 border-l-2 border-accent'
+                            : idx % 2 === 0
+                              ? 'bg-gray-50'
+                              : ''
+                        }
+                      >
+                        <td className="py-3 px-4 text-gray-900">
+                          {formatCwt(point.purchasePriceCwt)}
+                          {isCurrentConfig && (
+                            <span className="ml-2 text-xs font-medium text-accent">(current)</span>
+                          )}
+                        </td>
+                        <td className={`py-3 px-4 text-right ${point.springNetPerHead >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                          {formatCurrency(point.springNetPerHead)}
+                        </td>
+                        <td className={`py-3 px-4 text-right ${point.winterNetPerHead >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                          {formatCurrency(point.winterNetPerHead)}
+                        </td>
+                        <td className={`py-3 px-4 text-right font-medium ${point.annualNetTotal >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                          {formatCurrencyWhole(point.annualNetTotal)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Disclaimer                                                       */}
+        {/* ================================================================= */}
+        <div className="mt-12 bg-gray-50 rounded-lg p-6 text-center">
+          <p className="text-sm text-gray-400">
+            This business plan contains forward-looking financial projections based on current market
+            conditions and operational assumptions. Actual results may vary based on market
+            fluctuations, weather conditions, animal health, and other factors beyond the
+            operator&apos;s control. All figures are estimates and should not be construed as
+            guarantees of future performance.
+          </p>
+          <p className="mt-2 text-xs text-gray-300">
+            Generated by Pierce Land &amp; Cattle Business Plan System
+          </p>
+        </div>
       </div>
     </div>
   );
