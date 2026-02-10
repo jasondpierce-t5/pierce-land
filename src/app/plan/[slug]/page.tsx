@@ -31,6 +31,61 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // =============================================================================
+// Inline helper components for financial tables
+// =============================================================================
+
+function TableRow({
+  label,
+  value,
+  indent = false,
+}: {
+  label: string;
+  value: string | number;
+  indent?: boolean;
+}) {
+  return (
+    <div className={`flex justify-between py-2 px-4 even:bg-gray-50 ${indent ? 'pl-8' : ''}`}>
+      <span className="text-gray-600">{label}</span>
+      <span className="font-medium text-gray-900">{value}</span>
+    </div>
+  );
+}
+
+function SubtotalRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between py-2 px-4 border-t border-gray-300 font-semibold">
+      <span className="text-gray-700">{label}</span>
+      <span className="text-gray-900">{value}</span>
+    </div>
+  );
+}
+
+function TotalRow({
+  label,
+  value,
+  positive,
+}: {
+  label: string;
+  value: string;
+  positive: boolean;
+}) {
+  return (
+    <div className="flex justify-between py-3 px-4 bg-gray-50 border-t-2 border-gray-300 font-bold text-lg">
+      <span className="text-gray-900">{label}</span>
+      <span className={positive ? 'text-green-700' : 'text-red-600'}>{value}</span>
+    </div>
+  );
+}
+
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="px-4 py-2 bg-gray-100 font-semibold text-gray-700 text-sm uppercase tracking-wide">
+      {children}
+    </div>
+  );
+}
+
+// =============================================================================
 // Page component
 // =============================================================================
 
@@ -213,6 +268,120 @@ export default async function PlanPage({ params }: PageProps) {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Spring Turn — Per Head Analysis                                 */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Spring Turn &mdash; Per Head Analysis
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+            {/* Purchase */}
+            <SectionHeading>Purchase</SectionHeading>
+            <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
+            <TableRow label="Purchase Price" value={formatCwt(config.market_price_500lb)} />
+            <TableRow label="Purchase Cost" value={formatCurrency(spring.purchaseCost)} />
+
+            {/* Carrying Costs */}
+            <SectionHeading>Carrying Costs</SectionHeading>
+            <TableRow label="Interest Cost" value={formatCurrency(spring.interestCost)} indent />
+            <TableRow label="Death Loss" value={formatCurrency(spring.deathLoss)} indent />
+            <TableRow label="Health" value={formatCurrency(config.spring_health_cost_per_head)} indent />
+            <TableRow label="Freight In" value={formatCurrency(config.spring_freight_in_per_head)} indent />
+            <TableRow label="Mineral" value={formatCurrency(config.spring_mineral_cost_per_head)} indent />
+            <TableRow label="LRP Premium" value={formatCurrency(config.spring_lrp_premium_per_head)} indent />
+            <TableRow label="Marketing/Commission" value={formatCurrency(config.spring_marketing_commission_per_head)} indent />
+            <TableRow label="Freight Out" value={formatCurrency(config.spring_freight_out_per_head)} indent />
+            <TableRow label="Miscellaneous" value={formatCurrency(config.spring_misc_per_head)} indent />
+            <SubtotalRow label="Subtotal Carrying Costs" value={formatCurrency(spring.carryingCosts)} />
+
+            {/* Total Investment */}
+            <div className="flex justify-between py-3 px-4 bg-gray-50 border-t border-gray-200 font-bold">
+              <span className="text-gray-900">Total Investment</span>
+              <span className="text-gray-900">{formatCurrency(spring.totalInvestment)}</span>
+            </div>
+
+            {/* Sale */}
+            <SectionHeading>Sale</SectionHeading>
+            <TableRow label="Sale Weight" value={formatWeight(config.spring_sale_weight_lbs)} />
+            <TableRow label="Days on Feed" value={`${spring.daysOnFeed}`} />
+            <TableRow label="Weight Gain" value={formatWeight(spring.weightGain)} />
+            <TableRow label="Gross Revenue" value={formatCurrency(spring.grossRevenue)} />
+
+            {/* Net Income */}
+            <TotalRow
+              label="Net Income"
+              value={formatCurrency(spring.netIncome)}
+              positive={spring.netIncome >= 0}
+            />
+            <TableRow label="Cost of Gain" value={formatCwt(spring.costOfGain * 100)} />
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Winter Turn — Per Head Analysis                                 */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Winter Turn &mdash; Per Head Analysis
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+            {/* Purchase */}
+            <SectionHeading>Purchase</SectionHeading>
+            <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
+            <TableRow label="Purchase Price" value={formatCwt(config.market_price_500lb)} />
+            <TableRow label="Purchase Cost" value={formatCurrency(winter.purchaseCost)} />
+
+            {/* Carrying Costs */}
+            <SectionHeading>Carrying Costs</SectionHeading>
+            <TableRow label="Interest Cost" value={formatCurrency(winter.interestCost)} indent />
+            <TableRow label="Death Loss" value={formatCurrency(winter.deathLoss)} indent />
+            <TableRow label="Health" value={formatCurrency(config.winter_health_cost_per_head)} indent />
+            <TableRow label="Freight In" value={formatCurrency(config.winter_freight_in_per_head)} indent />
+            <TableRow label="Mineral" value={formatCurrency(config.winter_mineral_cost_per_head)} indent />
+            <TableRow label="LRP Premium" value={formatCurrency(config.winter_lrp_premium_per_head)} indent />
+            <TableRow label="Marketing/Commission" value={formatCurrency(config.winter_marketing_commission_per_head)} indent />
+            <TableRow label="Freight Out" value={formatCurrency(config.winter_freight_out_per_head)} indent />
+            <TableRow label="Miscellaneous" value={formatCurrency(config.winter_misc_per_head)} indent />
+
+            {/* Feed Costs (winter-specific) */}
+            <SectionHeading>Feed Costs</SectionHeading>
+            <TableRow
+              label={`Hay Cost (${formatNumber(winter.hayConsumed)} lbs consumed)`}
+              value={formatCurrency(winter.hayCost)}
+              indent
+            />
+            <TableRow label={`Hay Waste (${formatPercent(config.hay_waste_pct, 0)})`} value={formatCurrency(winter.hayWaste)} indent />
+            <TableRow label="Commodity Cost" value={formatCurrency(winter.commodityCost)} indent />
+            <SubtotalRow label="Total Feed Cost" value={formatCurrency(winter.totalFeedCost)} />
+
+            <SubtotalRow label="Subtotal Carrying Costs" value={formatCurrency(winter.carryingCosts)} />
+
+            {/* Total Investment */}
+            <div className="flex justify-between py-3 px-4 bg-gray-50 border-t border-gray-200 font-bold">
+              <span className="text-gray-900">Total Investment</span>
+              <span className="text-gray-900">{formatCurrency(winter.totalInvestment)}</span>
+            </div>
+
+            {/* Sale */}
+            <SectionHeading>Sale</SectionHeading>
+            <TableRow label="Sale Weight" value={formatWeight(config.winter_sale_weight_lbs)} />
+            <TableRow label="Days on Feed" value={`${winter.daysOnFeed}`} />
+            <TableRow label="Weight Gain" value={formatWeight(winter.weightGain)} />
+            <TableRow label="Gross Revenue" value={formatCurrency(winter.grossRevenue)} />
+
+            {/* Net Income */}
+            <TotalRow
+              label="Net Income"
+              value={formatCurrency(winter.netIncome)}
+              positive={winter.netIncome >= 0}
+            />
+            <TableRow label="Cost of Gain" value={formatCwt(winter.costOfGain * 100)} />
           </div>
         </section>
 
