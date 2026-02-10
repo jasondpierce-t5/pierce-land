@@ -145,11 +145,11 @@ export default async function PlanPage({ params }: PageProps) {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* KPI Summary Row */}
         <div className="print-no-break grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
           {/* Annual Net Income */}
-          <div className="bg-white shadow-sm rounded-lg p-4 border-l-4 border-accent">
+          <div className="bg-white shadow-md rounded-lg p-4 border-l-4 border-accent ring-1 ring-accent/20">
             <p className="text-xs text-gray-500 uppercase tracking-wide">
               Annual Net Income
             </p>
@@ -219,7 +219,7 @@ export default async function PlanPage({ params }: PageProps) {
             Operation Overview
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Operator Details */}
               <div>
@@ -290,7 +290,7 @@ export default async function PlanPage({ params }: PageProps) {
             Spring Turn &mdash; Per Head Analysis
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="mt-6 bg-white shadow-sm rounded-lg overflow-hidden">
             {/* Purchase */}
             <SectionHeading>Purchase</SectionHeading>
             <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
@@ -357,7 +357,7 @@ export default async function PlanPage({ params }: PageProps) {
             Winter Turn &mdash; Per Head Analysis
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="mt-6 bg-white shadow-sm rounded-lg overflow-hidden">
             {/* Purchase */}
             <SectionHeading>Purchase</SectionHeading>
             <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
@@ -437,7 +437,7 @@ export default async function PlanPage({ params }: PageProps) {
             Annual Projections
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <div className="grid md:grid-cols-3 gap-4">
               {/* Spring Net Total */}
               <div className="bg-gray-50 rounded-lg p-4 text-center">
@@ -506,7 +506,7 @@ export default async function PlanPage({ params }: PageProps) {
             Credit Structure
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             {/* Key Metrics Row */}
             <div className="grid md:grid-cols-3 gap-4 mb-6">
               <div className="text-center">
@@ -570,7 +570,7 @@ export default async function PlanPage({ params }: PageProps) {
             Scenario Analysis
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -630,7 +630,7 @@ export default async function PlanPage({ params }: PageProps) {
             Breakeven Analysis
           </h2>
 
-          <div className="print-no-break mt-4 grid md:grid-cols-2 gap-4">
+          <div className="print-no-break mt-6 grid md:grid-cols-2 gap-4">
             <div className="bg-white shadow-sm rounded-lg p-6 text-center">
               <p className="text-sm text-gray-500">Spring Turn Breakeven</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">
@@ -668,7 +668,7 @@ export default async function PlanPage({ params }: PageProps) {
             Worst-Case Scenario
           </h2>
 
-          <div className="print-no-break mt-4 bg-amber-50 border border-amber-200 rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-amber-50 border border-amber-200 rounded-lg p-6">
             <p className="text-gray-700">{worstCase.description}</p>
 
             <div className="grid md:grid-cols-2 gap-x-8 gap-y-2 mt-4">
@@ -713,7 +713,7 @@ export default async function PlanPage({ params }: PageProps) {
             Hay Price Sensitivity
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -779,7 +779,7 @@ export default async function PlanPage({ params }: PageProps) {
             Purchase Price Sensitivity
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
