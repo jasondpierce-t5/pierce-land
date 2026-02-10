@@ -73,7 +73,7 @@ Plans:
 
 Plans:
 - [x] **05-01**: Schema Migration & Config API Updates (32 new operational fields, 8-section admin form) — Complete
-- [ ] **05-02**: Calculation Engine Core
+- [x] **05-02**: Calculation Engine Core (type definitions, mergeConfig, spring/winter turns, annual projections, breakeven) — Complete
 - [ ] **05-03**: TBD
 
 ### Phase 6: Public Plan Pages
@@ -116,7 +116,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Admin Authentication & Layout | 1/1 | Complete | 2026-02-10 |
 | 3. Shared Config Management | 1/1 | Complete | 2026-02-10 |
 | 4. Bank Version Management | 2/2 | Complete | 2026-02-10 |
-| 5. Financial Calculations Engine | 1/3 | In progress | - |
+| 5. Financial Calculations Engine | 2/3 | In progress | - |
 | 6. Public Plan Pages | 0/TBD | Not started | - |
 | 7. Charts & Visualizations | 0/TBD | Not started | - |
 | 8. Print Optimization & Deployment | 0/TBD | Not started | - |
