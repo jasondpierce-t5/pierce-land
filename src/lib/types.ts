@@ -180,3 +180,34 @@ export interface HaySensitivityPoint {
  * Array of hay sensitivity data points for chart generation.
  */
 export type HaySensitivityTable = HaySensitivityPoint[];
+
+// =============================================================================
+// Purchase sensitivity and worst-case types
+// =============================================================================
+
+/**
+ * Single data point in the purchase price sensitivity analysis.
+ */
+export interface PurchaseSensitivityPoint {
+  purchasePriceCwt: number;
+  springNetPerHead: number;
+  winterNetPerHead: number;
+  annualNetTotal: number;
+}
+
+/**
+ * Array of purchase sensitivity data points for chart generation.
+ */
+export type PurchaseSensitivityTable = PurchaseSensitivityPoint[];
+
+/**
+ * Worst-case scenario: highest purchase price + lowest sale price.
+ */
+export interface WorstCaseScenario {
+  purchasePriceCwt: number;
+  salePriceCwt: number;
+  springNet: number;
+  winterNet: number;
+  annualNet: number;
+  description: string;
+}

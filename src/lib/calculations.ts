@@ -15,6 +15,8 @@ import type {
   AnnualProjection,
   ScenarioAnalysis,
   HaySensitivityTable,
+  PurchaseSensitivityTable,
+  WorstCaseScenario,
 } from './types';
 
 // =============================================================================
@@ -394,4 +396,83 @@ export function calculateHaySensitivity(
   }
 
   return results;
+}
+
+// =============================================================================
+// Purchase price sensitivity
+// =============================================================================
+
+/**
+ * Calculate purchase price sensitivity for both turns.
+ * Shows how profitability changes across purchase price range.
+ * Default range: base price +/- $0.20/lb in $0.10 increments (from project.md).
+ */
+export function calculatePurchaseSensitivity(
+  config: PlanConfig,
+  rangePerLb: number = 0.20,
+  incrementPerLb: number = 0.10
+): PurchaseSensitivityTable {
+  const results: PurchaseSensitivityTable = [];
+  const headCount = config.head_count;
+  const basePriceCwt = config.market_price_500lb;
+
+  // Convert lb to cwt for iteration (range +/-$20 per cwt if +/-$0.20/lb)
+  const rangeCwt = rangePerLb * 100;
+  const incrementCwt = incrementPerLb * 100;
+
+  const minPrice = basePriceCwt - rangeCwt;
+  const maxPrice = basePriceCwt + rangeCwt;
+
+  for (let purchasePrice = minPrice; purchasePrice <= maxPrice; purchasePrice += incrementCwt) {
+    // Create modified config with custom purchase price
+    const modifiedConfig = {
+      ...config,
+      market_price_500lb: purchasePrice,
+    };
+
+    // Recalculate both turns with modified purchase price
+    const springResult = calculateSpringTurn(modifiedConfig);
+    const winterResult = calculateWinterTurn(modifiedConfig);
+    const annualNet = (springResult.netIncome * headCount) + (winterResult.netIncome * headCount);
+
+    results.push({
+      purchasePriceCwt: purchasePrice,
+      springNetPerHead: springResult.netIncome,
+      winterNetPerHead: winterResult.netIncome,
+      annualNetTotal: annualNet,
+    });
+  }
+
+  return results;
+}
+
+// =============================================================================
+// Worst-case scenario
+// =============================================================================
+
+/**
+ * Calculate worst-case scenario: highest purchase price + lowest sale price.
+ */
+export function calculateWorstCase(config: PlanConfig): WorstCaseScenario {
+  const headCount = config.head_count;
+
+  // Worst case: max purchase price (base + $0.20/lb = base + $20/cwt) + min sale price
+  const worstConfig = {
+    ...config,
+    market_price_500lb: config.market_price_500lb + 20, // +$0.20/lb
+    market_price_850lb: config.sale_price_low_per_cwt,  // lowest sale price
+  };
+
+  const springWorst = calculateSpringTurn(worstConfig);
+  const winterWorst = calculateWinterTurn(worstConfig);
+  const annualNet = (springWorst.netIncome * headCount) + (winterWorst.netIncome * headCount);
+
+  return {
+    purchasePriceCwt: worstConfig.market_price_500lb,
+    salePriceCwt: worstConfig.market_price_850lb,
+    springNet: springWorst.netIncome,
+    winterNet: winterWorst.netIncome,
+    annualNet,
+    description: 'Highest purchase price (+$0.20/lb) with lowest sale price scenario',
+  };
 }
