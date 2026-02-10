@@ -14,6 +14,7 @@ import BreakevenChart from '@/components/charts/BreakevenChart';
 import CostBreakdownChart from '@/components/charts/CostBreakdownChart';
 import HaySensitivityChart from '@/components/charts/HaySensitivityChart';
 import PurchaseSensitivityChart from '@/components/charts/PurchaseSensitivityChart';
+import PrintButton from '@/components/PrintButton';
 
 // =============================================================================
 // Metadata
@@ -111,6 +112,11 @@ export default async function PlanPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Print Button */}
+      <div className="no-print flex justify-end max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <PrintButton />
+      </div>
+
       {/* Cover Header */}
       <div className="w-full bg-primary text-white py-10 px-8">
         <div className="max-w-5xl mx-auto">
@@ -141,7 +147,7 @@ export default async function PlanPage({ params }: PageProps) {
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* KPI Summary Row */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
+        <div className="print-no-break grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
           {/* Annual Net Income */}
           <div className="bg-white shadow-sm rounded-lg p-4 border-l-4 border-accent">
             <p className="text-xs text-gray-500 uppercase tracking-wide">
@@ -208,12 +214,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Operation Overview                                               */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Operation Overview
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Operator Details */}
               <div>
@@ -279,12 +285,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Spring Turn — Per Head Analysis                                 */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Spring Turn &mdash; Per Head Analysis
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
             {/* Purchase */}
             <SectionHeading>Purchase</SectionHeading>
             <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
@@ -327,7 +333,7 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
 
           {/* Spring Cost Breakdown Chart */}
-          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Spring Turn Cost Breakdown</h4>
             <CostBreakdownChart
               title="Spring Turn Cost Breakdown"
@@ -346,12 +352,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Winter Turn — Per Head Analysis                                 */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Winter Turn &mdash; Per Head Analysis
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
             {/* Purchase */}
             <SectionHeading>Purchase</SectionHeading>
             <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
@@ -406,7 +412,7 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
 
           {/* Winter Cost Breakdown Chart */}
-          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Winter Turn Cost Breakdown</h4>
             <CostBreakdownChart
               title="Winter Turn Cost Breakdown"
@@ -426,12 +432,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Annual Projections                                              */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Annual Projections
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
             <div className="grid md:grid-cols-3 gap-4">
               {/* Spring Net Total */}
               <div className="bg-gray-50 rounded-lg p-4 text-center">
@@ -495,12 +501,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Credit Structure                                                 */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Credit Structure
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
             {/* Key Metrics Row */}
             <div className="grid md:grid-cols-3 gap-4 mb-6">
               <div className="text-center">
@@ -559,12 +565,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Scenario Analysis                                              */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Scenario Analysis
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -610,7 +616,7 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
 
           {/* Scenario Chart */}
-          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Scenario Comparison</h4>
             <ScenarioChart scenarios={scenarios} />
           </div>
@@ -619,12 +625,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Breakeven Analysis                                               */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Breakeven Analysis
           </h2>
 
-          <div className="mt-4 grid md:grid-cols-2 gap-4">
+          <div className="print-no-break mt-4 grid md:grid-cols-2 gap-4">
             <div className="bg-white shadow-sm rounded-lg p-6 text-center">
               <p className="text-sm text-gray-500">Spring Turn Breakeven</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">
@@ -644,7 +650,7 @@ export default async function PlanPage({ params }: PageProps) {
           </p>
 
           {/* Breakeven Chart */}
-          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Breakeven vs Market Price</h4>
             <BreakevenChart
               springBreakeven={breakeven.springBreakeven}
@@ -662,7 +668,7 @@ export default async function PlanPage({ params }: PageProps) {
             Worst-Case Scenario
           </h2>
 
-          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-6">
+          <div className="print-no-break mt-4 bg-amber-50 border border-amber-200 rounded-lg p-6">
             <p className="text-gray-700">{worstCase.description}</p>
 
             <div className="grid md:grid-cols-2 gap-x-8 gap-y-2 mt-4">
@@ -702,12 +708,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Hay Price Sensitivity                                           */}
         {/* ================================================================= */}
-        <section>
+        <section className="print-break-before">
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Hay Price Sensitivity
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -756,7 +762,7 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
 
           {/* Hay Sensitivity Chart */}
-          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Hay Price Impact on Winter Net</h4>
             <HaySensitivityChart
               data={haySensitivity}
@@ -773,7 +779,7 @@ export default async function PlanPage({ params }: PageProps) {
             Purchase Price Sensitivity
           </h2>
 
-          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg p-6">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -822,7 +828,7 @@ export default async function PlanPage({ params }: PageProps) {
           </div>
 
           {/* Purchase Sensitivity Chart */}
-          <div className="mt-6 bg-white shadow-sm rounded-lg p-6">
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg p-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Purchase Price Impact on Annual Net</h4>
             <PurchaseSensitivityChart
               data={purchaseSensitivity}
