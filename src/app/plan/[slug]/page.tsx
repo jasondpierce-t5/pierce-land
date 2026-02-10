@@ -118,16 +118,16 @@ export default async function PlanPage({ params }: PageProps) {
       </div>
 
       {/* Cover Header */}
-      <div className="w-full bg-primary text-white py-10 px-8">
+      <div className="w-full bg-primary text-white py-14 px-8">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-bold tracking-wide">
+          <h1 className="text-4xl font-bold tracking-wide">
             PIERCE LAND &amp; CATTLE
           </h1>
-          <p className="text-xl mt-1 text-white/80">
+          <p className="text-xl mt-2 font-light text-white/80">
             Stocker Heifer Business Plan
           </p>
 
-          <div className="border-t border-white/20 my-4" />
+          <div className="border-t border-white/20 my-6" />
 
           <div className="flex justify-between items-center">
             <span className="text-lg">
@@ -138,7 +138,7 @@ export default async function PlanPage({ params }: PageProps) {
             </span>
           </div>
 
-          <p className="mt-2 text-white/70">
+          <p className="mt-3 text-sm text-white/60">
             {config.operator_name} | {config.operation_location}
           </p>
         </div>
