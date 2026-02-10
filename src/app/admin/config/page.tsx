@@ -58,6 +58,75 @@ interface ConfigData {
 // Helper type for fields that can be string or number
 type ConfigField = keyof ConfigData;
 
+function NumberInput({
+  field,
+  label,
+  step = '0.01',
+  unit,
+  value,
+  onChange,
+  error,
+}: {
+  field: string;
+  label: string;
+  step?: string;
+  unit?: string;
+  value: number;
+  onChange: (field: ConfigField, value: string) => void;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-2">
+        {label}{unit ? ` (${unit})` : ''}
+      </label>
+      <input
+        type="number"
+        id={field}
+        value={value}
+        onChange={(e) => onChange(field as ConfigField, e.target.value)}
+        step={step}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+      />
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
+    </div>
+  );
+}
+
+function TextInput({
+  field,
+  label,
+  value,
+  onChange,
+  error,
+}: {
+  field: string;
+  label: string;
+  value: string;
+  onChange: (field: ConfigField, value: string) => void;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-2">
+        {label}
+      </label>
+      <input
+        type="text"
+        id={field}
+        value={value}
+        onChange={(e) => onChange(field as ConfigField, e.target.value)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+      />
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
+    </div>
+  );
+}
+
 export default function ConfigPage() {
   const [formData, setFormData] = useState<ConfigData | null>(null);
   const [savedData, setSavedData] = useState<ConfigData | null>(null);
@@ -283,61 +352,6 @@ export default function ConfigPage() {
     }
   };
 
-  // Reusable input component for numeric fields
-  const NumberInput = ({
-    field,
-    label,
-    step = '0.01',
-    unit,
-  }: {
-    field: ConfigField;
-    label: string;
-    step?: string;
-    unit?: string;
-  }) => (
-    <div>
-      <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-2">
-        {label}{unit ? ` (${unit})` : ''}
-      </label>
-      <input
-        type="number"
-        id={field}
-        value={formData![field] as number}
-        onChange={(e) => handleChange(field, e.target.value)}
-        step={step}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-      />
-      {errors[field] && (
-        <p className="mt-1 text-sm text-red-600">{errors[field]}</p>
-      )}
-    </div>
-  );
-
-  // Reusable input component for text fields
-  const TextInput = ({
-    field,
-    label,
-  }: {
-    field: ConfigField;
-    label: string;
-  }) => (
-    <div>
-      <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-2">
-        {label}
-      </label>
-      <input
-        type="text"
-        id={field}
-        value={formData![field] as string}
-        onChange={(e) => handleChange(field, e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-      />
-      {errors[field] && (
-        <p className="mt-1 text-sm text-red-600">{errors[field]}</p>
-      )}
-    </div>
-  );
-
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -382,10 +396,10 @@ export default function ConfigPage() {
             Operator Information
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <TextInput field="operator_name" label="Operator Name" />
-            <TextInput field="operation_location" label="Operation Location" />
-            <NumberInput field="acres" label="Acres" step="1" unit="acres" />
-            <NumberInput field="years_experience" label="Years of Experience" step="1" unit="years" />
+            <TextInput field="operator_name" label="Operator Name" value={formData.operator_name} onChange={handleChange} error={errors.operator_name} />
+            <TextInput field="operation_location" label="Operation Location" value={formData.operation_location} onChange={handleChange} error={errors.operation_location} />
+            <NumberInput field="acres" label="Acres" step="1" unit="acres" value={formData.acres} onChange={handleChange} error={errors.acres} />
+            <NumberInput field="years_experience" label="Years of Experience" step="1" unit="years" value={formData.years_experience} onChange={handleChange} error={errors.years_experience} />
           </div>
         </fieldset>
 
@@ -395,10 +409,10 @@ export default function ConfigPage() {
             Market Prices & Scenarios
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="market_price_500lb" label="500 lb Market Price" unit="$/cwt" />
-            <NumberInput field="market_price_850lb" label="850 lb Market Price" unit="$/cwt" />
-            <NumberInput field="sale_price_low_per_cwt" label="Sale Price Low" unit="$/cwt" />
-            <NumberInput field="sale_price_high_per_cwt" label="Sale Price High" unit="$/cwt" />
+            <NumberInput field="market_price_500lb" label="Purchase Price (Mid)" unit="$/cwt" value={formData.market_price_500lb} onChange={handleChange} error={errors.market_price_500lb} />
+            <NumberInput field="market_price_850lb" label="Sale Price (Mid)" unit="$/cwt" value={formData.market_price_850lb} onChange={handleChange} error={errors.market_price_850lb} />
+            <NumberInput field="sale_price_low_per_cwt" label="Sale Price Low" unit="$/cwt" value={formData.sale_price_low_per_cwt} onChange={handleChange} error={errors.sale_price_low_per_cwt} />
+            <NumberInput field="sale_price_high_per_cwt" label="Sale Price High" unit="$/cwt" value={formData.sale_price_high_per_cwt} onChange={handleChange} error={errors.sale_price_high_per_cwt} />
           </div>
         </fieldset>
 
@@ -408,8 +422,8 @@ export default function ConfigPage() {
             Feed Costs
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="hay_price_per_ton" label="Hay Price" unit="$/ton" />
-            <NumberInput field="feed_cost_per_day" label="Feed Cost" unit="$/head/day" />
+            <NumberInput field="hay_price_per_ton" label="Hay Price" unit="$/ton" value={formData.hay_price_per_ton} onChange={handleChange} error={errors.hay_price_per_ton} />
+            <NumberInput field="feed_cost_per_day" label="Feed Cost" unit="$/head/day" value={formData.feed_cost_per_day} onChange={handleChange} error={errors.feed_cost_per_day} />
           </div>
         </fieldset>
 
@@ -419,10 +433,10 @@ export default function ConfigPage() {
             Operational Parameters
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="purchase_weight_lbs" label="Purchase Weight" step="1" unit="lbs" />
-            <NumberInput field="sale_weight_lbs" label="Sale Weight" step="1" unit="lbs" />
-            <NumberInput field="avg_daily_gain_lbs" label="Average Daily Gain" unit="lbs/day" />
-            <NumberInput field="mortality_rate_pct" label="Mortality Rate" unit="%" />
+            <NumberInput field="purchase_weight_lbs" label="Purchase Weight" step="1" unit="lbs" value={formData.purchase_weight_lbs} onChange={handleChange} error={errors.purchase_weight_lbs} />
+            <NumberInput field="sale_weight_lbs" label="Sale Weight" step="1" unit="lbs" value={formData.sale_weight_lbs} onChange={handleChange} error={errors.sale_weight_lbs} />
+            <NumberInput field="avg_daily_gain_lbs" label="Average Daily Gain" unit="lbs/day" value={formData.avg_daily_gain_lbs} onChange={handleChange} error={errors.avg_daily_gain_lbs} />
+            <NumberInput field="mortality_rate_pct" label="Mortality Rate" unit="%" value={formData.mortality_rate_pct} onChange={handleChange} error={errors.mortality_rate_pct} />
           </div>
         </fieldset>
 
@@ -432,16 +446,16 @@ export default function ConfigPage() {
             Spring Turn Costs
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="spring_sale_weight_lbs" label="Sale Weight" step="1" unit="lbs" />
-            <NumberInput field="spring_days_on_feed" label="Days on Feed" step="1" unit="days" />
-            <NumberInput field="spring_health_cost_per_head" label="Health Cost" unit="$/head" />
-            <NumberInput field="spring_freight_in_per_head" label="Freight In" unit="$/head" />
-            <NumberInput field="spring_mineral_cost_per_head" label="Mineral Cost" unit="$/head" />
-            <NumberInput field="spring_lrp_premium_per_head" label="LRP Premium" unit="$/head" />
-            <NumberInput field="spring_marketing_commission_per_head" label="Marketing Commission" unit="$/head" />
-            <NumberInput field="spring_freight_out_per_head" label="Freight Out" unit="$/head" />
-            <NumberInput field="spring_death_loss_pct" label="Death Loss" unit="%" />
-            <NumberInput field="spring_misc_per_head" label="Miscellaneous" unit="$/head" />
+            <NumberInput field="spring_sale_weight_lbs" label="Sale Weight" step="1" unit="lbs" value={formData.spring_sale_weight_lbs} onChange={handleChange} error={errors.spring_sale_weight_lbs} />
+            <NumberInput field="spring_days_on_feed" label="Days on Feed" step="1" unit="days" value={formData.spring_days_on_feed} onChange={handleChange} error={errors.spring_days_on_feed} />
+            <NumberInput field="spring_health_cost_per_head" label="Health Cost" unit="$/head" value={formData.spring_health_cost_per_head} onChange={handleChange} error={errors.spring_health_cost_per_head} />
+            <NumberInput field="spring_freight_in_per_head" label="Freight In" unit="$/head" value={formData.spring_freight_in_per_head} onChange={handleChange} error={errors.spring_freight_in_per_head} />
+            <NumberInput field="spring_mineral_cost_per_head" label="Mineral Cost" unit="$/head" value={formData.spring_mineral_cost_per_head} onChange={handleChange} error={errors.spring_mineral_cost_per_head} />
+            <NumberInput field="spring_lrp_premium_per_head" label="LRP Premium" unit="$/head" value={formData.spring_lrp_premium_per_head} onChange={handleChange} error={errors.spring_lrp_premium_per_head} />
+            <NumberInput field="spring_marketing_commission_per_head" label="Marketing Commission" unit="$/head" value={formData.spring_marketing_commission_per_head} onChange={handleChange} error={errors.spring_marketing_commission_per_head} />
+            <NumberInput field="spring_freight_out_per_head" label="Freight Out" unit="$/head" value={formData.spring_freight_out_per_head} onChange={handleChange} error={errors.spring_freight_out_per_head} />
+            <NumberInput field="spring_death_loss_pct" label="Death Loss" unit="%" value={formData.spring_death_loss_pct} onChange={handleChange} error={errors.spring_death_loss_pct} />
+            <NumberInput field="spring_misc_per_head" label="Miscellaneous" unit="$/head" value={formData.spring_misc_per_head} onChange={handleChange} error={errors.spring_misc_per_head} />
           </div>
         </fieldset>
 
@@ -451,16 +465,16 @@ export default function ConfigPage() {
             Winter Turn Costs
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="winter_sale_weight_lbs" label="Sale Weight" step="1" unit="lbs" />
-            <NumberInput field="winter_days_on_feed" label="Days on Feed" step="1" unit="days" />
-            <NumberInput field="winter_health_cost_per_head" label="Health Cost" unit="$/head" />
-            <NumberInput field="winter_freight_in_per_head" label="Freight In" unit="$/head" />
-            <NumberInput field="winter_mineral_cost_per_head" label="Mineral Cost" unit="$/head" />
-            <NumberInput field="winter_lrp_premium_per_head" label="LRP Premium" unit="$/head" />
-            <NumberInput field="winter_marketing_commission_per_head" label="Marketing Commission" unit="$/head" />
-            <NumberInput field="winter_freight_out_per_head" label="Freight Out" unit="$/head" />
-            <NumberInput field="winter_death_loss_pct" label="Death Loss" unit="%" />
-            <NumberInput field="winter_misc_per_head" label="Miscellaneous" unit="$/head" />
+            <NumberInput field="winter_sale_weight_lbs" label="Sale Weight" step="1" unit="lbs" value={formData.winter_sale_weight_lbs} onChange={handleChange} error={errors.winter_sale_weight_lbs} />
+            <NumberInput field="winter_days_on_feed" label="Days on Feed" step="1" unit="days" value={formData.winter_days_on_feed} onChange={handleChange} error={errors.winter_days_on_feed} />
+            <NumberInput field="winter_health_cost_per_head" label="Health Cost" unit="$/head" value={formData.winter_health_cost_per_head} onChange={handleChange} error={errors.winter_health_cost_per_head} />
+            <NumberInput field="winter_freight_in_per_head" label="Freight In" unit="$/head" value={formData.winter_freight_in_per_head} onChange={handleChange} error={errors.winter_freight_in_per_head} />
+            <NumberInput field="winter_mineral_cost_per_head" label="Mineral Cost" unit="$/head" value={formData.winter_mineral_cost_per_head} onChange={handleChange} error={errors.winter_mineral_cost_per_head} />
+            <NumberInput field="winter_lrp_premium_per_head" label="LRP Premium" unit="$/head" value={formData.winter_lrp_premium_per_head} onChange={handleChange} error={errors.winter_lrp_premium_per_head} />
+            <NumberInput field="winter_marketing_commission_per_head" label="Marketing Commission" unit="$/head" value={formData.winter_marketing_commission_per_head} onChange={handleChange} error={errors.winter_marketing_commission_per_head} />
+            <NumberInput field="winter_freight_out_per_head" label="Freight Out" unit="$/head" value={formData.winter_freight_out_per_head} onChange={handleChange} error={errors.winter_freight_out_per_head} />
+            <NumberInput field="winter_death_loss_pct" label="Death Loss" unit="%" value={formData.winter_death_loss_pct} onChange={handleChange} error={errors.winter_death_loss_pct} />
+            <NumberInput field="winter_misc_per_head" label="Miscellaneous" unit="$/head" value={formData.winter_misc_per_head} onChange={handleChange} error={errors.winter_misc_per_head} />
           </div>
         </fieldset>
 
@@ -470,12 +484,12 @@ export default function ConfigPage() {
             Winter Feed Details
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="hay_price_per_bale" label="Hay Price" unit="$/bale" />
-            <NumberInput field="hay_bale_weight_lbs" label="Bale Weight" step="1" unit="lbs" />
-            <NumberInput field="hay_daily_intake_lbs" label="Daily Hay Intake" step="0.1" unit="lbs/day" />
-            <NumberInput field="hay_waste_pct" label="Hay Waste" unit="%" />
-            <NumberInput field="commodity_price_per_ton" label="Commodity Price" unit="$/ton" />
-            <NumberInput field="commodity_daily_intake_lbs" label="Daily Commodity Intake" step="0.1" unit="lbs/day" />
+            <NumberInput field="hay_price_per_bale" label="Hay Price" unit="$/bale" value={formData.hay_price_per_bale} onChange={handleChange} error={errors.hay_price_per_bale} />
+            <NumberInput field="hay_bale_weight_lbs" label="Bale Weight" step="1" unit="lbs" value={formData.hay_bale_weight_lbs} onChange={handleChange} error={errors.hay_bale_weight_lbs} />
+            <NumberInput field="hay_daily_intake_lbs" label="Daily Hay Intake" step="0.1" unit="lbs/day" value={formData.hay_daily_intake_lbs} onChange={handleChange} error={errors.hay_daily_intake_lbs} />
+            <NumberInput field="hay_waste_pct" label="Hay Waste" unit="%" value={formData.hay_waste_pct} onChange={handleChange} error={errors.hay_waste_pct} />
+            <NumberInput field="commodity_price_per_ton" label="Commodity Price" unit="$/ton" value={formData.commodity_price_per_ton} onChange={handleChange} error={errors.commodity_price_per_ton} />
+            <NumberInput field="commodity_daily_intake_lbs" label="Daily Commodity Intake" step="0.1" unit="lbs/day" value={formData.commodity_daily_intake_lbs} onChange={handleChange} error={errors.commodity_daily_intake_lbs} />
           </div>
         </fieldset>
 
@@ -485,9 +499,9 @@ export default function ConfigPage() {
             Financial Defaults
           </legend>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="interest_rate_pct" label="Interest Rate" unit="%" />
-            <NumberInput field="loc_amount" label="Line of Credit" unit="$" />
-            <NumberInput field="head_count" label="Head Count" step="1" />
+            <NumberInput field="interest_rate_pct" label="Interest Rate" unit="%" value={formData.interest_rate_pct} onChange={handleChange} error={errors.interest_rate_pct} />
+            <NumberInput field="loc_amount" label="Line of Credit" unit="$" value={formData.loc_amount} onChange={handleChange} error={errors.loc_amount} />
+            <NumberInput field="head_count" label="Head Count" step="1" value={formData.head_count} onChange={handleChange} error={errors.head_count} />
           </div>
         </fieldset>
 
