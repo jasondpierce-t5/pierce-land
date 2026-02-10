@@ -136,6 +136,57 @@
     margin-top: 1.5rem !important;
   }
 
+  /* --- Print Visual Refinements (Phase 10) --- */
+
+  /* Border strengthening: gray-100 (#f3f4f6) is invisible on paper,
+     promote to gray-300 (#d1d5db) for visible card/section borders */
+  .border-gray-100 {
+    border-color: #d1d5db !important;
+  }
+
+  /* Ensure border-l-4 accent borders render with color preservation */
+  .border-l-4 {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* LOC utilization bar: ensure background colors render on progress bar */
+  .bg-gray-200.rounded-full,
+  .rounded-full[class*="bg-"] {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Zebra striping: strengthen bg-gray-50 (#f9fafb) to more visible
+     shade (#f0f0f0) so alternating rows are distinguishable on paper */
+  .even\:bg-gray-50:nth-child(even),
+  .bg-gray-50\/50 {
+    background-color: #f0f0f0 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Accent highlight rows: strengthen bg-accent/10 for print visibility */
+  .bg-accent\/10 {
+    background-color: rgba(var(--color-accent), 0.18) !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Print link cleanup: prevent unexpected underlines */
+  a {
+    text-decoration: none !important;
+  }
+
+  /* KPI ring treatment: Tailwind ring-* uses --tw-ring-shadow (a box-shadow),
+     already cleared by * { box-shadow: none }. Also clear outline for safety. */
+  .ring-1,
+  .ring-accent\/20,
+  [class*="ring-"] {
+    --tw-ring-shadow: 0 0 #0000 !important;
+    outline: none !important;
+  }
+
   /* --- Typography --- */
   h1 {
     font-size: 18pt;
