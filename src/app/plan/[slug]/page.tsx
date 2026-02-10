@@ -214,7 +214,7 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Operation Overview                                               */}
         {/* ================================================================= */}
-        <section className="print-break-before">
+        <section>
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Operation Overview
           </h2>
@@ -290,7 +290,7 @@ export default async function PlanPage({ params }: PageProps) {
             Spring Turn &mdash; Per Head Analysis
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
             {/* Purchase */}
             <SectionHeading>Purchase</SectionHeading>
             <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
@@ -352,12 +352,12 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Winter Turn — Per Head Analysis                                 */}
         {/* ================================================================= */}
-        <section className="print-break-before">
+        <section>
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Winter Turn &mdash; Per Head Analysis
           </h2>
 
-          <div className="print-no-break mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
+          <div className="mt-4 bg-white shadow-sm rounded-lg overflow-hidden">
             {/* Purchase */}
             <SectionHeading>Purchase</SectionHeading>
             <TableRow label="Purchase Weight" value={formatWeight(config.purchase_weight_lbs)} />
@@ -432,7 +432,7 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Annual Projections                                              */}
         {/* ================================================================= */}
-        <section className="print-break-before">
+        <section>
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Annual Projections
           </h2>
@@ -501,7 +501,7 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Credit Structure                                                 */}
         {/* ================================================================= */}
-        <section className="print-break-before">
+        <section>
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Credit Structure
           </h2>
@@ -625,7 +625,7 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Breakeven Analysis                                               */}
         {/* ================================================================= */}
-        <section className="print-break-before">
+        <section>
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Breakeven Analysis
           </h2>
@@ -708,7 +708,7 @@ export default async function PlanPage({ params }: PageProps) {
         {/* ================================================================= */}
         {/* Hay Price Sensitivity                                           */}
         {/* ================================================================= */}
-        <section className="print-break-before">
+        <section>
           <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
             Hay Price Sensitivity
           </h2>
