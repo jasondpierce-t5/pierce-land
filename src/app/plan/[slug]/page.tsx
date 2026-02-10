@@ -6,6 +6,8 @@ import {
   formatCurrencyWhole,
   formatPercent,
   formatNumber,
+  formatWeight,
+  formatCwt,
 } from '@/lib/formatters';
 
 // =============================================================================
@@ -142,6 +144,77 @@ export default async function PlanPage({ params }: PageProps) {
             </p>
           </div>
         </div>
+
+        {/* ================================================================= */}
+        {/* Operation Overview                                               */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Operation Overview
+          </h2>
+
+          <div className="mt-4 bg-white shadow-sm rounded-lg p-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Operator Details */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">
+                  Operator Details
+                </h3>
+                <div className="space-y-0">
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Operator</span>
+                    <span className="font-medium text-gray-900">{config.operator_name}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Location</span>
+                    <span className="font-medium text-gray-900">{config.operation_location}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Experience</span>
+                    <span className="font-medium text-gray-900">{config.years_experience} years</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Acreage</span>
+                    <span className="font-medium text-gray-900">{formatNumber(config.acres)} acres</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Operation Parameters */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-3">
+                  Operation Parameters
+                </h3>
+                <div className="space-y-0">
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Head Count</span>
+                    <span className="font-medium text-gray-900">{formatNumber(config.head_count)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Purchase Weight</span>
+                    <span className="font-medium text-gray-900">{formatWeight(config.purchase_weight_lbs)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Target Sale Weight</span>
+                    <span className="font-medium text-gray-900">{formatWeight(config.sale_weight_lbs)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Avg Daily Gain</span>
+                    <span className="font-medium text-gray-900">{config.avg_daily_gain_lbs} lbs/day</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-100 py-2">
+                    <span className="text-gray-600">Interest Rate</span>
+                    <span className="font-medium text-gray-900">{formatPercent(config.interest_rate_pct)}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Line of Credit</span>
+                    <span className="font-medium text-gray-900">{formatCurrencyWhole(config.loc_amount)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Business plan sections added by Plan 06-02 and 06-03 */}
       </div>
