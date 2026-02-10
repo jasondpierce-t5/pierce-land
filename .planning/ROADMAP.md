@@ -69,10 +69,12 @@ Plans:
 **Goal**: Complete calculation logic for all financial projections and sensitivity analysis
 **Depends on**: Phase 3
 **Research**: Unlikely (Internal business logic derived from requirements, no external integrations)
-**Plans**: TBD
+**Plans**: 3
 
 Plans:
-- [ ] TBD during phase planning
+- [x] **05-01**: Schema Migration & Config API Updates (32 new operational fields, 8-section admin form) — Complete
+- [ ] **05-02**: Calculation Engine Core
+- [ ] **05-03**: TBD
 
 ### Phase 6: Public Plan Pages
 **Goal**: Dynamic `/plan/[slug]` routes rendering bank-specific business plans
@@ -114,7 +116,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Admin Authentication & Layout | 1/1 | Complete | 2026-02-10 |
 | 3. Shared Config Management | 1/1 | Complete | 2026-02-10 |
 | 4. Bank Version Management | 2/2 | Complete | 2026-02-10 |
-| 5. Financial Calculations Engine | 0/TBD | Not started | - |
+| 5. Financial Calculations Engine | 1/3 | In progress | - |
 | 6. Public Plan Pages | 0/TBD | Not started | - |
 | 7. Charts & Visualizations | 0/TBD | Not started | - |
 | 8. Print Optimization & Deployment | 0/TBD | Not started | - |
