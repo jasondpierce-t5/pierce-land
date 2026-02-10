@@ -7,7 +7,13 @@
  * No rounding at calculation level — consumers decide display precision.
  */
 
-import type { PlanConfig, PlanVersion, TurnResult, WinterTurnResult } from './types';
+import type {
+  PlanConfig,
+  PlanVersion,
+  TurnResult,
+  WinterTurnResult,
+  AnnualProjection,
+} from './types';
 
 // =============================================================================
 // Config merging
@@ -192,5 +198,89 @@ export function calculateWinterTurn(config: PlanConfig): WinterTurnResult {
     hayWaste,
     commodityCost,
     totalFeedCost,
+  };
+}
+
+// =============================================================================
+// Annual projections
+// =============================================================================
+
+/**
+ * Combine spring and winter per-head results into annual totals.
+ * Multiplies per-head values by head_count for herd-level numbers.
+ * Tracks LOC utilization against the configured line of credit.
+ */
+export function calculateAnnualProjections(
+  spring: TurnResult,
+  winter: WinterTurnResult,
+  config: PlanConfig
+): AnnualProjection {
+  const headCount = config.head_count;
+
+  // Total net income (spring + winter) x head count
+  const springTotal = spring.netIncome * headCount;
+  const winterTotal = winter.netIncome * headCount;
+  const annualNetIncome = springTotal + winterTotal;
+
+  // Total revenue
+  const totalRevenue =
+    spring.grossRevenue * headCount + winter.grossRevenue * headCount;
+
+  // Total investment
+  const totalInvestment =
+    spring.totalInvestment * headCount + winter.totalInvestment * headCount;
+
+  // LOC utilization (percentage of line of credit used)
+  const locUtilization =
+    config.loc_amount > 0 ? (totalInvestment / config.loc_amount) * 100 : 0;
+  const locCapacityRemaining = config.loc_amount - totalInvestment;
+
+  return {
+    springTotal,
+    winterTotal,
+    annualNetIncome,
+    totalRevenue,
+    totalInvestment,
+    locUtilization,
+    locCapacityRemaining,
+  };
+}
+
+// =============================================================================
+// Breakeven calculations
+// =============================================================================
+
+/**
+ * Calculate breakeven sale price per cwt for a turn.
+ * Breakeven is the price at which netIncome = 0:
+ *   breakeven_per_cwt = (totalInvestment / saleWeightLbs) * 100
+ *
+ * Division-by-zero guard: returns 0 if saleWeight is 0.
+ */
+export function calculateBreakeven(
+  totalInvestment: number,
+  saleWeightLbs: number
+): number {
+  return saleWeightLbs > 0 ? (totalInvestment / saleWeightLbs) * 100 : 0;
+}
+
+/**
+ * Get breakeven sale prices for both spring and winter turns.
+ * Returns per-cwt prices that would yield zero net income.
+ */
+export function getBreakevenPrices(
+  spring: TurnResult,
+  winter: WinterTurnResult,
+  config: PlanConfig
+): { springBreakeven: number; winterBreakeven: number } {
+  return {
+    springBreakeven: calculateBreakeven(
+      spring.totalInvestment,
+      config.spring_sale_weight_lbs
+    ),
+    winterBreakeven: calculateBreakeven(
+      winter.totalInvestment,
+      config.winter_sale_weight_lbs
+    ),
   };
 }
