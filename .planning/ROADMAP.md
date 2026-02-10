@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Admin Authentication & Layout** - Password gate, dashboard structure
 - [x] **Phase 3: Shared Config Management** - Market prices and operational params interface
 - [x] **Phase 4: Bank Version Management** - Create/edit bank-specific plans with overrides
-- [ ] **Phase 5: Financial Calculations Engine** - Core calc logic, scenarios, sensitivity analysis
+- [x] **Phase 5: Financial Calculations Engine** - Core calc logic, scenarios, sensitivity analysis
 - [ ] **Phase 6: Public Plan Pages** - Dynamic routing and plan rendering
 - [ ] **Phase 7: Charts & Visualizations** - Chart.js integration for all business charts
 - [ ] **Phase 8: Print Optimization & Deployment** - PDF styles, Vercel deployment, domain config
@@ -69,12 +69,12 @@ Plans:
 **Goal**: Complete calculation logic for all financial projections and sensitivity analysis
 **Depends on**: Phase 3
 **Research**: Unlikely (Internal business logic derived from requirements, no external integrations)
-**Plans**: 3
+**Plans**: 3 (complete)
 
 Plans:
 - [x] **05-01**: Schema Migration & Config API Updates (32 new operational fields, 8-section admin form) — Complete
 - [x] **05-02**: Calculation Engine Core (type definitions, mergeConfig, spring/winter turns, annual projections, breakeven) — Complete
-- [ ] **05-03**: TBD
+- [x] **05-03**: Scenario & Sensitivity Analysis (scenarios, hay/purchase sensitivity, worst-case) — Complete
 
 ### Phase 6: Public Plan Pages
 **Goal**: Dynamic `/plan/[slug]` routes rendering bank-specific business plans
@@ -116,7 +116,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Admin Authentication & Layout | 1/1 | Complete | 2026-02-10 |
 | 3. Shared Config Management | 1/1 | Complete | 2026-02-10 |
 | 4. Bank Version Management | 2/2 | Complete | 2026-02-10 |
-| 5. Financial Calculations Engine | 2/3 | In progress | - |
+| 5. Financial Calculations Engine | 3/3 | Complete | 2026-02-10 |
 | 6. Public Plan Pages | 0/TBD | Not started | - |
 | 7. Charts & Visualizations | 0/TBD | Not started | - |
 | 8. Print Optimization & Deployment | 0/TBD | Not started | - |
