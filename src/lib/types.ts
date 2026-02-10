@@ -137,3 +137,27 @@ export interface AnnualProjection {
   locUtilization: number;
   locCapacityRemaining: number;
 }
+
+// =============================================================================
+// Scenario analysis types
+// =============================================================================
+
+/**
+ * Result for a single price scenario (low, mid, or high).
+ */
+export interface ScenarioResult {
+  scenario: 'low' | 'mid' | 'high';
+  salePriceCwt: number;
+  springNet: number;
+  winterNet: number;
+  annualNet: number;
+}
+
+/**
+ * Complete scenario analysis with all three price scenarios.
+ */
+export interface ScenarioAnalysis {
+  low: ScenarioResult;
+  mid: ScenarioResult;
+  high: ScenarioResult;
+}

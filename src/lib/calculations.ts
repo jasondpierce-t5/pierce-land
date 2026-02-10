@@ -13,6 +13,7 @@ import type {
   TurnResult,
   WinterTurnResult,
   AnnualProjection,
+  ScenarioAnalysis,
 } from './types';
 
 // =============================================================================
@@ -282,5 +283,75 @@ export function getBreakevenPrices(
       winter.totalInvestment,
       config.winter_sale_weight_lbs
     ),
+  };
+}
+
+// =============================================================================
+// Scenario analysis
+// =============================================================================
+
+/**
+ * Calculate turn results at a specific sale price.
+ * Creates modified config with custom sale price, then runs calculations.
+ */
+function calculateTurnAtPrice(
+  config: PlanConfig,
+  salePriceCwt: number,
+  turnType: 'spring' | 'winter'
+): TurnResult | WinterTurnResult {
+  // Create modified config with custom sale price
+  const modifiedConfig = {
+    ...config,
+    market_price_850lb: salePriceCwt, // Override mid price with scenario price
+  };
+
+  return turnType === 'spring'
+    ? calculateSpringTurn(modifiedConfig)
+    : calculateWinterTurn(modifiedConfig);
+}
+
+/**
+ * Calculate financial projections across low/mid/high price scenarios.
+ */
+export function calculateScenarios(config: PlanConfig): ScenarioAnalysis {
+  const headCount = config.head_count;
+
+  // Low scenario
+  const springLow = calculateTurnAtPrice(config, config.sale_price_low_per_cwt, 'spring') as TurnResult;
+  const winterLow = calculateTurnAtPrice(config, config.sale_price_low_per_cwt, 'winter') as WinterTurnResult;
+  const lowAnnual = (springLow.netIncome * headCount) + (winterLow.netIncome * headCount);
+
+  // Mid scenario (base case — uses market_price_850lb)
+  const springMid = calculateSpringTurn(config);
+  const winterMid = calculateWinterTurn(config);
+  const midAnnual = (springMid.netIncome * headCount) + (winterMid.netIncome * headCount);
+
+  // High scenario
+  const springHigh = calculateTurnAtPrice(config, config.sale_price_high_per_cwt, 'spring') as TurnResult;
+  const winterHigh = calculateTurnAtPrice(config, config.sale_price_high_per_cwt, 'winter') as WinterTurnResult;
+  const highAnnual = (springHigh.netIncome * headCount) + (winterHigh.netIncome * headCount);
+
+  return {
+    low: {
+      scenario: 'low',
+      salePriceCwt: config.sale_price_low_per_cwt,
+      springNet: springLow.netIncome,
+      winterNet: winterLow.netIncome,
+      annualNet: lowAnnual,
+    },
+    mid: {
+      scenario: 'mid',
+      salePriceCwt: config.market_price_850lb,
+      springNet: springMid.netIncome,
+      winterNet: winterMid.netIncome,
+      annualNet: midAnnual,
+    },
+    high: {
+      scenario: 'high',
+      salePriceCwt: config.sale_price_high_per_cwt,
+      springNet: springHigh.netIncome,
+      winterNet: winterHigh.netIncome,
+      annualNet: highAnnual,
+    },
   };
 }
