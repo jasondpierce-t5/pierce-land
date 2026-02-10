@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Professional presentation that looks polished to bankers
-**Current focus:** Phase 5 complete — Ready for Phase 6: Public Plan Pages
+**Current focus:** Phase 6 in progress — Public Plan Pages
 
 ## Current Position
 
-Phase: 5 of 8 (Financial Calculations Engine)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-10 — Completed 05-03-PLAN.md
+Phase: 6 of 8 (Public Plan Pages)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-10 — Completed 06-01-PLAN.md
 
-Progress: ▓▓▓▓▓▓▓░░░ 69% (9/13 plans complete)
+Progress: ████████░░ 77% (10/13 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 9.2 min
-- Total execution time: 1.37 hours
+- Total plans completed: 10
+- Average duration: 9.9 min
+- Total execution time: 1.65 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: ▓▓▓▓▓▓▓░░░ 69% (9/13 plans complete)
 | 03-shared-config-mgmt | 1 | 8 min | 8 min |
 | 04-bank-version-mgmt | 2 | 18 min | 9 min |
 | 05-financial-calculations | 3 | 12 min | 4 min |
+| 06-public-plan-pages | 1 | 17 min | 17 min |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 5min, 4min, 3min
-- Trend: Excellent velocity (3-6 min recent average)
+- Last 5 plans: 5min, 4min, 3min, 17min
+- Trend: 06-01 longer due to full data pipeline + page rendering
 
 ## Accumulated Context
 
@@ -103,6 +104,11 @@ Recent decisions affecting current work:
 2. Private helper calculateTurnAtPrice not exported — internal to scenario function
 3. Worst-case uses fixed +$0.20/lb premium on purchase + lowest sale price scenario
 
+**From Plan 06-01 (Public Data Layer & Page Foundation):**
+1. Direct function call from server component (no API route) — fetchPlanData called directly
+2. Accounting format for negative currency: ($1,234.56) — banker-friendly convention
+3. N/A fallback for all formatters on invalid input (NaN, Infinity, undefined)
+
 ### Deferred Issues
 
 None yet.
@@ -114,6 +120,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed 05-03-PLAN.md — Phase 5 complete with scenario/sensitivity analysis
-Resume file: .planning/phases/05-financial-calculations/05-03-SUMMARY.md
-Next: Phase 6 planning (Public Plan Pages)
+Stopped at: Completed 06-01-PLAN.md — Public data layer and page foundation
+Resume file: .planning/phases/06-public-plan-pages/06-01-SUMMARY.md
+Next: 06-02-PLAN.md (Financial Detail Sections)

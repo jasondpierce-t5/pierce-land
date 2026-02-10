@@ -83,7 +83,7 @@ Plans:
 **Plans**: 3
 
 Plans:
-- [ ] **06-01**: Public Data Layer & Page Foundation (formatters, fetchPlanData, /plan/[slug] route, cover header, KPI row)
+- [x] **06-01**: Public Data Layer & Page Foundation (formatters, fetchPlanData, /plan/[slug] route, cover header, KPI row) — Complete
 - [ ] **06-02**: Financial Detail Sections (operation overview, spring/winter turn tables, annual projections, credit structure)
 - [ ] **06-03**: Analysis Sections & Verification (scenario analysis, breakeven, worst-case, sensitivity tables, disclaimer, human verify)
 
@@ -119,6 +119,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Shared Config Management | 1/1 | Complete | 2026-02-10 |
 | 4. Bank Version Management | 2/2 | Complete | 2026-02-10 |
 | 5. Financial Calculations Engine | 3/3 | Complete | 2026-02-10 |
-| 6. Public Plan Pages | 0/3 | Planned | - |
+| 6. Public Plan Pages | 1/3 | In progress | - |
 | 7. Charts & Visualizations | 0/TBD | Not started | - |
 | 8. Print Optimization & Deployment | 0/TBD | Not started | - |
