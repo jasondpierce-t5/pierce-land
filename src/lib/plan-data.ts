@@ -7,7 +7,7 @@
  * Called directly from server components — no API route needed.
  */
 
-import { supabase } from './supabase';
+import { getSupabase } from './supabase';
 import {
   mergeConfig,
   calculateSpringTurn,
@@ -88,7 +88,7 @@ export interface PlanPageData {
  */
 export async function fetchPlanData(slug: string): Promise<PlanPageData | null> {
   // 1. Fetch the active plan version by slug
-  const { data: version, error: versionError } = await supabase
+  const { data: version, error: versionError } = await getSupabase()
     .from('plan_versions')
     .select('*')
     .eq('slug', slug)
@@ -101,7 +101,7 @@ export async function fetchPlanData(slug: string): Promise<PlanPageData | null> 
   }
 
   // 2. Fetch the base plan config (singleton row)
-  const { data: config, error: configError } = await supabase
+  const { data: config, error: configError } = await getSupabase()
     .from('plan_config')
     .select(PLAN_CONFIG_COLUMNS)
     .single();
