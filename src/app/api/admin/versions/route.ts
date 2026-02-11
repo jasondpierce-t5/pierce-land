@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export async function GET() {
   try {
     // Fetch all versions ordered by created_at DESC
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('plan_versions')
       .select('*')
       .order('created_at', { ascending: false });
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check slug uniqueness
-    const { data: existingSlugs, error: slugCheckError } = await supabase
+    const { data: existingSlugs, error: slugCheckError } = await getSupabase()
       .from('plan_versions')
       .select('slug')
       .eq('slug', body.slug);
@@ -124,7 +125,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new version with is_active = true by default
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('plan_versions')
       .insert({
         bank_name: body.bank_name.trim(),

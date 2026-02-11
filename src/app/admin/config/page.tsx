@@ -249,7 +249,7 @@ export default function ConfigPage() {
   const fetchConfig = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/config');
+      const response = await fetch(`/api/admin/config?t=${Date.now()}`, { cache: 'no-store' });
 
       if (!response.ok) {
         const data = await response.json();
@@ -257,6 +257,7 @@ export default function ConfigPage() {
       }
 
       const data = await response.json();
+      console.log('[LOAD] market_price_500lb:', data?.market_price_500lb, 'updated_at:', data?.updated_at);
       setFormData(data);
       setSavedData(data);
       setMessage(null);
@@ -433,8 +434,10 @@ export default function ConfigPage() {
       });
 
       const data = await response.json();
+      console.log('[SAVE] Response status:', response.status, 'market_price_500lb:', data?.market_price_500lb, 'updated_at:', data?.updated_at);
 
       if (!response.ok) {
+        console.error('[SAVE] Error response:', data);
         throw new Error(data.error || 'Failed to update configuration');
       }
 
@@ -444,6 +447,7 @@ export default function ConfigPage() {
       setShowSavedFlash(true);
       setTimeout(() => setShowSavedFlash(false), 2000);
     } catch (error) {
+      console.error('[SAVE] Exception:', error);
       setMessage({
         type: 'error',
         text: error instanceof Error ? error.message : 'Failed to update configuration',

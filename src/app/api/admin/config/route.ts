@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 // Explicit column list bypasses PostgREST schema cache issues with SELECT *
 const PLAN_CONFIG_COLUMNS = [
@@ -31,7 +32,7 @@ const PLAN_CONFIG_COLUMNS = [
 export async function GET() {
   try {
     // Query singleton config row
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('plan_config')
       .select(PLAN_CONFIG_COLUMNS)
       .single();
@@ -47,7 +48,9 @@ export async function GET() {
       throw error;
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' },
+    });
   } catch (error) {
     console.error('Error fetching config:', error);
     return NextResponse.json(
@@ -297,7 +300,7 @@ export async function PUT(request: NextRequest) {
     // =========================================================================
     // Update the singleton row (two-stage: SELECT id, then UPDATE WHERE id)
     // =========================================================================
-    const { data: currentConfig, error: fetchError } = await supabase
+    const { data: currentConfig, error: fetchError } = await getSupabase()
       .from('plan_config')
       .select('id')
       .single();
@@ -376,7 +379,8 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update with the fetched id
-    const { data, error } = await supabase
+    console.log('[CONFIG PUT] Updating market_price_500lb:', updateData.market_price_500lb);
+    const { data, error } = await getSupabase()
       .from('plan_config')
       .update(updateData)
       .eq('id', currentConfig.id)
@@ -384,9 +388,11 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
+      console.error('[CONFIG PUT] Supabase error:', error);
       throw error;
     }
 
+    console.log('[CONFIG PUT] Returned market_price_500lb:', (data as any)?.market_price_500lb, 'updated_at:', (data as any)?.updated_at);
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error updating config:', error);

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export async function GET(
   request: NextRequest,
@@ -10,7 +11,7 @@ export async function GET(
   try {
     const { id } = params;
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('plan_versions')
       .select('*')
       .eq('id', id)
@@ -42,7 +43,7 @@ export async function PATCH(
     const { id } = params;
 
     // Verify version exists
-    const { data: existingVersion, error: fetchError } = await supabase
+    const { data: existingVersion, error: fetchError } = await getSupabase()
       .from('plan_versions')
       .select('*')
       .eq('id', id)
@@ -90,7 +91,7 @@ export async function PATCH(
       }
 
       // Check slug uniqueness (exclude current record)
-      const { data: existingSlugs, error: slugCheckError } = await supabase
+      const { data: existingSlugs, error: slugCheckError } = await getSupabase()
         .from('plan_versions')
         .select('slug')
         .eq('slug', body.slug)
@@ -170,7 +171,7 @@ export async function PATCH(
     }
 
     // Update version
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('plan_versions')
       .update(updateData)
       .eq('id', id)
@@ -199,7 +200,7 @@ export async function DELETE(
     const { id } = params;
 
     // Verify version exists
-    const { data: existingVersion, error: fetchError } = await supabase
+    const { data: existingVersion, error: fetchError } = await getSupabase()
       .from('plan_versions')
       .select('id')
       .eq('id', id)
@@ -213,7 +214,7 @@ export async function DELETE(
     }
 
     // Soft delete by setting is_active = false
-    const { error } = await supabase
+    const { error } = await getSupabase()
       .from('plan_versions')
       .update({ is_active: false })
       .eq('id', id);
