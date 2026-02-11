@@ -18,11 +18,13 @@ interface ScenarioChartProps {
     mid: ScenarioResult;
     high: ScenarioResult;
   };
+  headCount: number;
 }
 
-export default function ScenarioChart({ scenarios }: ScenarioChartProps) {
-  const labels = ['Spring Net/Head', 'Winter Net/Head', 'Annual Net'];
+export default function ScenarioChart({ scenarios, headCount }: ScenarioChartProps) {
+  const labels = ['Spring Net/Head', 'Winter Net/Head', 'Annual Net/Head'];
 
+  const hc = headCount > 0 ? headCount : 1;
   const data = {
     labels,
     datasets: [
@@ -31,7 +33,7 @@ export default function ScenarioChart({ scenarios }: ScenarioChartProps) {
         data: [
           scenarios.low.springNet,
           scenarios.low.winterNet,
-          scenarios.low.annualNet,
+          scenarios.low.annualNet / hc,
         ],
         backgroundColor: SCENARIO_COLORS.low,
       },
@@ -40,7 +42,7 @@ export default function ScenarioChart({ scenarios }: ScenarioChartProps) {
         data: [
           scenarios.mid.springNet,
           scenarios.mid.winterNet,
-          scenarios.mid.annualNet,
+          scenarios.mid.annualNet / hc,
         ],
         backgroundColor: SCENARIO_COLORS.mid,
       },
@@ -49,7 +51,7 @@ export default function ScenarioChart({ scenarios }: ScenarioChartProps) {
         data: [
           scenarios.high.springNet,
           scenarios.high.winterNet,
-          scenarios.high.annualNet,
+          scenarios.high.annualNet / hc,
         ],
         backgroundColor: SCENARIO_COLORS.high,
       },

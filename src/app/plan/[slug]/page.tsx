@@ -329,7 +329,7 @@ export default async function PlanPage({ params }: PageProps) {
               value={formatCurrency(spring.netIncome)}
               positive={spring.netIncome >= 0}
             />
-            <TableRow label="Cost of Gain" value={formatCwt(spring.costOfGain * 100)} />
+            <TableRow label="Cost of Gain" value={`${formatCurrency(spring.costOfGain)}/lb`} />
           </div>
 
           {/* Spring Cost Breakdown Chart */}
@@ -408,7 +408,7 @@ export default async function PlanPage({ params }: PageProps) {
               value={formatCurrency(winter.netIncome)}
               positive={winter.netIncome >= 0}
             />
-            <TableRow label="Cost of Gain" value={formatCwt(winter.costOfGain * 100)} />
+            <TableRow label="Cost of Gain" value={`${formatCurrency(winter.costOfGain)}/lb`} />
           </div>
 
           {/* Winter Cost Breakdown Chart */}
@@ -618,7 +618,7 @@ export default async function PlanPage({ params }: PageProps) {
           {/* Scenario Chart */}
           <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg border border-gray-100 p-6">
             <h4 className="text-base font-semibold text-gray-700 mb-4">Scenario Comparison</h4>
-            <ScenarioChart scenarios={scenarios} />
+            <ScenarioChart scenarios={scenarios} headCount={config.head_count} />
           </div>
         </section>
 

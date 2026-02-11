@@ -230,9 +230,9 @@ export function calculateAnnualProjections(
   const totalRevenue =
     spring.grossRevenue * headCount + winter.grossRevenue * headCount;
 
-  // Total investment
+  // Peak capital required (turns are sequential, never simultaneous)
   const totalInvestment =
-    spring.totalInvestment * headCount + winter.totalInvestment * headCount;
+    Math.max(spring.totalInvestment, winter.totalInvestment) * headCount;
 
   // LOC utilization (percentage of line of credit used)
   const locUtilization =
