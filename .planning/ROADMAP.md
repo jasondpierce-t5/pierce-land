@@ -7,7 +7,7 @@ Professional stocker heifer business plan web app with live financials, charts, 
 ## Milestones
 
 - ✅ [v1.0 MVP](milestones/v1.0-ROADMAP.md) (Phases 1-8) — SHIPPED 2026-02-10
-- 🚧 **v1.1 Polish & UX** — Phases 9-13 (in progress)
+- 🚧 **v1.1 Polish & UX** — Phases 9-13 (all phases complete)
 
 ## Phases
 
@@ -70,15 +70,15 @@ Plans:
 Plans:
 - [x] 12-01: Dashboard Live Stats & Breadcrumb Navigation
 
-#### Phase 13: Bank Version Management UX
+#### Phase 13: Bank Version Management UX — Complete
 
 **Goal**: Polish the bank version create/edit/list experience for smoother admin workflow
 **Depends on**: Phase 12
 **Research**: Unlikely (internal CRUD patterns)
-**Plans**: TBD
+**Plans**: 1
 
 Plans:
-- [ ] 13-01: TBD (run /gsd:plan-phase 13 to break down)
+- [x] 13-01: List Polish, GET-by-ID, Slug Preview URLs
 
 ## Progress
 
@@ -96,4 +96,4 @@ Plans:
 | 10. Print & PDF Polish | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 11. Admin Config Form UX | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 12. Admin Dashboard & Navigation | v1.1 | 1/1 | Complete | 2026-02-10 |
-| 13. Bank Version Management UX | v1.1 | 0/? | Not started | - |
+| 13. Bank Version Management UX | v1.1 | 1/1 | Complete | 2026-02-10 |
