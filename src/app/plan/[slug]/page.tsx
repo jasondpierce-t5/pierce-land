@@ -1,6 +1,9 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { fetchPlanData } from '@/lib/plan-data';
+
+// Disable Next.js data cache — always fetch fresh config from Supabase
+export const revalidate = 0;
 import {
   formatCurrency,
   formatCurrencyWhole,
