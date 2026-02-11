@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 interface BankVersion {
@@ -8,19 +9,34 @@ interface BankVersion {
   bank_name: string;
   slug: string;
   is_active: boolean;
-  line_of_credit_override: number | null;
-  interest_rate_pct_override: number | null;
-  total_head_override: number | null;
+  override_loc_amount: number | null;
+  override_interest_rate_pct: number | null;
+  override_head_count: number | null;
   created_at: string;
   updated_at: string;
 }
 
 export default function BankVersionsListPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [versions, setVersions] = useState<BankVersion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [deactivating, setDeactivating] = useState<string | null>(null);
+  const [reactivating, setReactivating] = useState<string | null>(null);
+
+  // Read URL success params on mount
+  useEffect(() => {
+    const success = searchParams.get('success');
+    if (success === 'created') {
+      setMessage({ type: 'success', text: 'Bank version created successfully' });
+      router.replace('/admin/versions');
+    } else if (success === 'updated') {
+      setMessage({ type: 'success', text: 'Bank version updated successfully' });
+      router.replace('/admin/versions');
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     fetchVersions();
@@ -48,9 +64,9 @@ export default function BankVersionsListPage() {
 
   const countOverrides = (version: BankVersion): number => {
     let count = 0;
-    if (version.line_of_credit_override !== null) count++;
-    if (version.interest_rate_pct_override !== null) count++;
-    if (version.total_head_override !== null) count++;
+    if (version.override_loc_amount !== null) count++;
+    if (version.override_interest_rate_pct !== null) count++;
+    if (version.override_head_count !== null) count++;
     return count;
   };
 
@@ -91,10 +107,89 @@ export default function BankVersionsListPage() {
     }
   };
 
+  const handleReactivate = async (version: BankVersion) => {
+    const confirmed = window.confirm(
+      `Reactivate ${version.bank_name}? This will make the plan publicly available again.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setReactivating(version.id);
+      setMessage(null);
+
+      const response = await fetch(`/api/admin/versions/${version.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: true }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to reactivate version');
+      }
+
+      setMessage({
+        type: 'success',
+        text: 'Version reactivated successfully',
+      });
+
+      // Refresh list
+      await fetchVersions();
+    } catch (err) {
+      setMessage({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Failed to reactivate version',
+      });
+    } finally {
+      setReactivating(null);
+    }
+  };
+
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="text-gray-500">Loading versions...</div>
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-6 flex justify-between items-center">
+          <div>
+            <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
+            <div className="mt-2 h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
+          </div>
+          <div className="h-10 bg-gray-200 rounded w-48 animate-pulse"></div>
+        </div>
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Overrides</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {[1, 2, 3].map((i) => (
+                <tr key={i}>
+                  <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-36 animate-pulse"></div></td>
+                  <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-28 animate-pulse"></div></td>
+                  <td className="px-6 py-4"><div className="h-5 bg-gray-200 rounded-full w-16 animate-pulse"></div></td>
+                  <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div></td>
+                  <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div></td>
+                  <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
@@ -155,6 +250,9 @@ export default function BankVersionsListPage() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Created
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Overrides
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -185,24 +283,45 @@ export default function BankVersionsListPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {formatDate(version.created_at)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {overrideCount > 0
                         ? `${overrideCount} custom value${overrideCount > 1 ? 's' : ''}`
                         : 'Using defaults'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm space-x-4">
+                      {version.is_active && (
+                        <a
+                          href={`/plan/${version.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent hover:underline"
+                        >
+                          View Plan
+                        </a>
+                      )}
                       <Link
                         href={`/admin/versions/${version.id}/edit`}
                         className="text-accent hover:underline"
                       >
                         Edit
                       </Link>
-                      {version.is_active && (
+                      {version.is_active ? (
                         <button
                           onClick={() => handleDeactivate(version)}
                           disabled={deactivating === version.id}
                           className="text-red-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {deactivating === version.id ? 'Deactivating...' : 'Deactivate'}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleReactivate(version)}
+                          disabled={reactivating === version.id}
+                          className="text-green-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {reactivating === version.id ? 'Reactivating...' : 'Reactivate'}
                         </button>
                       )}
                     </td>
