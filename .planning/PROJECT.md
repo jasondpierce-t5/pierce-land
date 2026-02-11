@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A web application at **piercelandandcattle.com** that generates professional, print-ready stocker heifer business plans with live financials, charts, and sensitivity analysis. Each bank gets a unique shareable URL with current market data. The admin dashboard allows updating shared operational/financial inputs once, and all bank-specific plans automatically reflect the changes.
+A web application at **piercelandandcattle.com** that generates professional, print-ready stocker heifer business plans with live financials, charts, and sensitivity analysis. Each bank gets a unique shareable URL with current market data. The admin dashboard features collapsible config sections, live version stats, breadcrumb navigation, and polished bank version management — all designed for efficient single-operator workflow.
 
 ## Core Value
 
@@ -23,10 +23,15 @@ A web application at **piercelandandcattle.com** that generates professional, pr
 - Print-to-PDF — Browser-based PDF export with clean print styles, minimal forced page breaks — v1.0
 - Unique URLs — Clean, shareable links per bank (e.g., `/plan/cameron`, `/plan/first-national`) — v1.0
 - Professional design — Brand colors (primary #1a3a2a, accent #c4872a, green #3a7d53), Inter font — v1.0
+- ✓ Public page visual polish — Hero KPI treatment, card borders, chart title prominence, section spacing — v1.1
+- ✓ Print/PDF polish — 50% spacing compression, strengthened borders, branded footer, heading orphan prevention — v1.1
+- ✓ Admin config UX — Collapsible accordion sections, field descriptions, sticky save bar with unsaved changes — v1.1
+- ✓ Admin dashboard UX — Live version stats, Link-based navigation cards, breadcrumb navigation — v1.1
+- ✓ Bank version management UX — Skeleton loading, success messages, reactivation, slug preview URLs, GET-by-ID API — v1.1
 
 ### Active
 
-(None — all v1.0 requirements shipped. New requirements pending user feedback.)
+(None — all v1.0 and v1.1 requirements shipped. New requirements pending user feedback.)
 
 ### Out of Scope
 
@@ -46,7 +51,7 @@ A web application at **piercelandandcattle.com** that generates professional, pr
 
 **Professional credibility:** These plans go directly to ag lending officers. Visual polish, calculation accuracy, and print quality directly impact lending decisions.
 
-**Current state (v1.0):** Shipped 2026-02-10 with 5,070 lines of TypeScript/TSX/CSS across 41 files. Tech stack: Next.js 14, Supabase, Chart.js, Tailwind CSS, deployed to Vercel at piercelandandcattle.com. 8 phases, 16 plans executed in ~2.6 hours.
+**Current state (v1.1):** Shipped 2026-02-10 with ~5,770 lines of TypeScript/TSX/CSS across 50 files. Tech stack: Next.js 14, Supabase, Chart.js, Tailwind CSS, deployed to Vercel at piercelandandcattle.com. 13 phases, 22 plans across 2 milestones executed in ~3.4 hours total.
 
 ## Constraints
 
@@ -70,6 +75,11 @@ A web application at **piercelandandcattle.com** that generates professional, pr
 | Direct server component data fetching | No API routes for public pages, function call from server component | Good — simpler architecture |
 | Minimal forced page breaks (2 of 8) | Checkpoint feedback showed excessive whitespace with per-section breaks | Good — compact PDF output |
 | Vercel deployment with CLI env vars | Build requires env vars at compile time, set before production deploy | Good — clean deployment |
+| CSS max-height accordion transition | Simpler than JS-driven height measurement, no layout thrashing | Good — smooth, reliable |
+| Set-based section tracking for config | Multiple sections open simultaneously vs single-active | Good — natural for reference workflow |
+| JSON.stringify for change detection | Simple comparison for flat config object with ~45 fields | Good — reliable, no false positives |
+| Inline breadcrumb in layout.tsx | Layout-specific, simple enough to not warrant separate file | Good — clean, maintainable |
+| Suspense boundary for useSearchParams | Required by Next.js 14 for static page generation compatibility | Good — build passes cleanly |
 
 ---
-*Last updated: 2026-02-10 after v1.0 milestone*
+*Last updated: 2026-02-10 after v1.1 milestone*

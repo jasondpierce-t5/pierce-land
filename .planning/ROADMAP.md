@@ -7,7 +7,7 @@ Professional stocker heifer business plan web app with live financials, charts, 
 ## Milestones
 
 - ✅ [v1.0 MVP](milestones/v1.0-ROADMAP.md) (Phases 1-8) — SHIPPED 2026-02-10
-- 🚧 **v1.1 Polish & UX** — Phases 9-13 (all phases complete)
+- ✅ [v1.1 Polish & UX](milestones/v1.1-ROADMAP.md) (Phases 9-13) — SHIPPED 2026-02-10
 
 ## Phases
 
@@ -25,60 +25,16 @@ Professional stocker heifer business plan web app with live financials, charts, 
 
 </details>
 
-### 🚧 v1.1 Polish & UX (In Progress)
+<details>
+<summary>✅ v1.1 Polish & UX (Phases 9-13) — SHIPPED 2026-02-10</summary>
 
-**Milestone Goal:** Elevate admin experience and visual polish to match the professional quality of the public-facing plan pages.
+- [x] Phase 9: Public Page Design Polish (2/2 plans) — 2026-02-10
+- [x] Phase 10: Print & PDF Polish (1/1 plan) — 2026-02-10
+- [x] Phase 11: Admin Config Form UX (1/1 plan) — 2026-02-10
+- [x] Phase 12: Admin Dashboard & Navigation (1/1 plan) — 2026-02-10
+- [x] Phase 13: Bank Version Management UX (1/1 plan) — 2026-02-10
 
-#### Phase 9: Public Page Design Polish — Complete
-
-**Goal**: Refine typography, spacing, and visual hierarchy on public plan pages for a more polished presentation
-**Depends on**: Previous milestone complete
-**Research**: Unlikely (internal Tailwind patterns)
-**Plans**: 2
-
-Plans:
-- [x] 09-01: Cover Header & Section Spacing
-- [x] 09-02: Tables, Cards & Chart Polish
-
-#### Phase 10: Print & PDF Polish — Complete
-
-**Goal**: Improve print stylesheet for cleaner, more professional banker-ready PDF output
-**Depends on**: Phase 9
-**Research**: Unlikely (existing CSS print patterns)
-**Plans**: 1
-
-Plans:
-- [x] 10-01: Print Spacing Compression & Visual Refinement
-
-#### Phase 11: Admin Config Form UX — Complete
-
-**Goal**: Redesign config form with better grouping, labels, descriptions, and editing flow
-**Depends on**: Phase 10
-**Research**: Unlikely (internal form patterns)
-**Plans**: 1
-
-Plans:
-- [x] 11-01: Collapsible Sections, Field Descriptions & Sticky Save Bar
-
-#### Phase 12: Admin Dashboard & Navigation — Complete
-
-**Goal**: Improve dashboard landing page, navigation between admin sections, and overall workflow
-**Depends on**: Phase 11
-**Research**: Unlikely (internal layout patterns)
-**Plans**: 1
-
-Plans:
-- [x] 12-01: Dashboard Live Stats & Breadcrumb Navigation
-
-#### Phase 13: Bank Version Management UX — Complete
-
-**Goal**: Polish the bank version create/edit/list experience for smoother admin workflow
-**Depends on**: Phase 12
-**Research**: Unlikely (internal CRUD patterns)
-**Plans**: 1
-
-Plans:
-- [x] 13-01: List Polish, GET-by-ID, Slug Preview URLs
+</details>
 
 ## Progress
 
