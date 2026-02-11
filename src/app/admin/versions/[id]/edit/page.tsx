@@ -348,14 +348,14 @@ export default function EditBankVersionPage() {
                 Edit slug if needed (use lowercase letters, numbers, and hyphens only).
               </p>
               {formData.slug && slugPattern.test(formData.slug) && (
-                <p className="mt-1 text-sm text-gray-400">
-                  piercelandandcattle.com/plan/<a
-                    href={`/plan/${formData.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono text-accent hover:underline"
-                  >{formData.slug}</a>
-                </p>
+                <a
+                  href={`/plan/${formData.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 block text-sm text-accent hover:underline"
+                >
+                  piercelandandcattle.com/plan/<span className="font-mono">{formData.slug}</span>
+                </a>
               )}
               {errors.slug && (
                 <p className="mt-1 text-sm text-red-600">{errors.slug}</p>
