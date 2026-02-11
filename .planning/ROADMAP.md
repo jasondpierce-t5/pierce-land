@@ -60,15 +60,15 @@ Plans:
 Plans:
 - [x] 11-01: Collapsible Sections, Field Descriptions & Sticky Save Bar
 
-#### Phase 12: Admin Dashboard & Navigation
+#### Phase 12: Admin Dashboard & Navigation — Complete
 
 **Goal**: Improve dashboard landing page, navigation between admin sections, and overall workflow
 **Depends on**: Phase 11
 **Research**: Unlikely (internal layout patterns)
-**Plans**: TBD
+**Plans**: 1
 
 Plans:
-- [ ] 12-01: TBD (run /gsd:plan-phase 12 to break down)
+- [x] 12-01: Dashboard Live Stats & Breadcrumb Navigation
 
 #### Phase 13: Bank Version Management UX
 
@@ -95,5 +95,5 @@ Plans:
 | 9. Public Page Design Polish | v1.1 | 2/2 | Complete | 2026-02-10 |
 | 10. Print & PDF Polish | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 11. Admin Config Form UX | v1.1 | 1/1 | Complete | 2026-02-10 |
-| 12. Admin Dashboard & Navigation | v1.1 | 0/? | Not started | - |
+| 12. Admin Dashboard & Navigation | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 13. Bank Version Management UX | v1.1 | 0/? | Not started | - |
