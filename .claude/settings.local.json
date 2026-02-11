@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx supabase login:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout 20 npm run dev:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(git log:*)",
+      "Skill(gsd:execute-plan)",
+      "Skill(gsd:execute-plan:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx vercel:*)",
+      "Bash(curl:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(node -e:*)",
+      "Bash(npx next build:*)",
+      "Bash(rd /s /q \".next\")"
+    ]
+  }
+}
