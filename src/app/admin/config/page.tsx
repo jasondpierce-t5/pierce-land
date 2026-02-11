@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 interface ConfigData {
   id?: string;
@@ -226,6 +226,13 @@ export default function ConfigPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [openSections, setOpenSections] = useState<Set<SectionName>>(new Set(DEFAULT_OPEN_SECTIONS));
+  const [showSavedFlash, setShowSavedFlash] = useState(false);
+
+  // Detect unsaved changes by comparing current form data to saved data
+  const hasChanges = useMemo(() => {
+    if (!formData || !savedData) return false;
+    return JSON.stringify(formData) !== JSON.stringify(savedData);
+  }, [formData, savedData]);
 
   // Fetch current config on mount
   useEffect(() => {
@@ -422,10 +429,9 @@ export default function ConfigPage() {
 
       setFormData(data);
       setSavedData(data);
-      setMessage({
-        type: 'success',
-        text: 'Configuration updated successfully',
-      });
+      setMessage(null);
+      setShowSavedFlash(true);
+      setTimeout(() => setShowSavedFlash(false), 2000);
     } catch (error) {
       setMessage({
         type: 'error',
@@ -493,7 +499,7 @@ export default function ConfigPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6">
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 pb-0 relative">
         {/* Section 1: Operator Information */}
         <CollapsibleSection
           name="operator-info"
@@ -633,23 +639,50 @@ export default function ConfigPage() {
           </div>
         </CollapsibleSection>
 
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
-          <button
-            type="button"
-            onClick={handleCancel}
-            disabled={submitting}
-            className="px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={submitting || Object.keys(errors).length > 0}
-            className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting ? 'Saving...' : 'Save Configuration'}
-          </button>
+        {/* Sticky Save Bar */}
+        <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] -mx-6 px-6 py-4 mt-4 rounded-b-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center min-h-[24px]">
+              {showSavedFlash && (
+                <span className="text-sm font-medium text-green-600 transition-opacity duration-300">
+                  Saved!
+                </span>
+              )}
+              {!showSavedFlash && hasChanges && (
+                <span className="flex items-center text-sm font-medium text-amber-600">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                  Unsaved changes
+                </span>
+              )}
+            </div>
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                onClick={handleCancel}
+                disabled={submitting}
+                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              {hasChanges ? (
+                <button
+                  type="submit"
+                  disabled={submitting || Object.keys(errors).length > 0}
+                  className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Saving...' : 'Save Configuration'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="px-6 py-2 bg-gray-200 text-gray-400 rounded-md cursor-not-allowed"
+                >
+                  Saved
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </form>
     </div>
