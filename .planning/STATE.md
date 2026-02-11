@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Professional presentation that looks polished to bankers
-**Current focus:** Planning next milestone
+**Current focus:** HTTPS security & feature formalization
 
 ## Current Position
 
-Milestone: v1.1 Polish & UX — SHIPPED
-Phase: 13 of 13 (all complete)
-Plan: All complete
-Status: Milestone shipped — ready for next milestone planning
-Last activity: 2026-02-10 — v1.1 milestone complete
+Milestone: v1.2 Features
+Phase: 14 of 16 (Post-v1.1 Feature Formalization)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-02-11 — Milestone v1.2 created
 
-Progress: ████████████████ 100% (22/22 plans, 13/13 phases across 2 milestones)
+Progress: ░░░░░░░░░░ 0%
 
 ## Performance Metrics
 
@@ -43,16 +43,18 @@ None.
 
 ### Blockers/Concerns
 
-None.
+- Domain DNS points to 216.198.79.1 (registrar default), not Vercel — SSL cert fails
+- Banks block non-HTTPS links — critical for production use
 
 ### Roadmap Evolution
 
 - Milestone v1.0 MVP shipped: Phases 1-8 (2026-02-10)
 - Milestone v1.1 Polish & UX shipped: Phases 9-13 (2026-02-10)
+- Milestone v1.2 Features created: HTTPS security + formalize post-v1.1 work, 3 phases (Phase 14-16)
 
 ## Session Continuity
 
-Last session: 2026-02-10
-Stopped at: v1.1 milestone complete and archived
+Last session: 2026-02-11
+Stopped at: Milestone v1.2 initialization
 Resume file: None
-Next: /gsd:discuss-milestone or /gsd:new-milestone
+Next: /gsd:plan-phase 14

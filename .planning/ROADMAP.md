@@ -8,6 +8,7 @@ Professional stocker heifer business plan web app with live financials, charts, 
 
 - ✅ [v1.0 MVP](milestones/v1.0-ROADMAP.md) (Phases 1-8) — SHIPPED 2026-02-10
 - ✅ [v1.1 Polish & UX](milestones/v1.1-ROADMAP.md) (Phases 9-13) — SHIPPED 2026-02-10
+- 🚧 **v1.2 Features** - Phases 14-16 (in progress)
 
 ## Phases
 
@@ -36,6 +37,42 @@ Professional stocker heifer business plan web app with live financials, charts, 
 
 </details>
 
+### 🚧 v1.2 Features (In Progress)
+
+**Milestone Goal:** Formalize post-v1.1 features (sell/buy marketing, spring feed costs), fix HTTPS/SSL for bank security requirements, and harden production deployment.
+
+#### Phase 14: Post-v1.1 Feature Formalization
+
+**Goal**: Document and verify sell/buy marketing model, spring feed costs, and build stability fixes shipped after v1.1
+**Depends on**: Previous milestone complete
+**Research**: Unlikely (internal documentation)
+**Plans**: TBD
+
+Plans:
+- [ ] 14-01: TBD (run /gsd:plan-phase 14 to break down)
+
+#### Phase 15: Domain & SSL Configuration
+
+**Goal**: Configure DNS to point to Vercel, verify SSL certificate provisioning, ensure HTTPS access works for all bank URLs
+**Depends on**: Phase 14
+**Research**: Likely (Vercel domain/SSL setup, DNS configuration)
+**Research topics**: Vercel custom domain setup, DNS A/CNAME records, SSL certificate provisioning
+**Plans**: TBD
+
+Plans:
+- [ ] 15-01: TBD (run /gsd:plan-phase 15 to break down)
+
+#### Phase 16: Security Hardening
+
+**Goal**: Add security headers, HTTPS enforcement middleware, verify all bank plan URLs work securely
+**Depends on**: Phase 15
+**Research**: Likely (Next.js security headers, Content-Security-Policy)
+**Research topics**: Next.js security headers config, CSP for Chart.js, HTTPS enforcement middleware
+**Plans**: TBD
+
+Plans:
+- [ ] 16-01: TBD (run /gsd:plan-phase 16 to break down)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -53,3 +90,6 @@ Professional stocker heifer business plan web app with live financials, charts, 
 | 11. Admin Config Form UX | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 12. Admin Dashboard & Navigation | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 13. Bank Version Management UX | v1.1 | 1/1 | Complete | 2026-02-10 |
+| 14. Post-v1.1 Feature Formalization | v1.2 | 0/? | Not started | - |
+| 15. Domain & SSL Configuration | v1.2 | 0/? | Not started | - |
+| 16. Security Hardening | v1.2 | 0/? | Not started | - |
