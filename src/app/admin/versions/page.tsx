@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -16,7 +16,55 @@ interface BankVersion {
   updated_at: string;
 }
 
+function BankVersionsListSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
+          <div className="mt-2 h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
+        </div>
+        <div className="h-10 bg-gray-200 rounded w-48 animate-pulse"></div>
+      </div>
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bank Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Overrides</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {[1, 2, 3].map((i) => (
+              <tr key={i}>
+                <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-36 animate-pulse"></div></td>
+                <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-28 animate-pulse"></div></td>
+                <td className="px-6 py-4"><div className="h-5 bg-gray-200 rounded-full w-16 animate-pulse"></div></td>
+                <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div></td>
+                <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div></td>
+                <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function BankVersionsListPage() {
+  return (
+    <Suspense fallback={<BankVersionsListSkeleton />}>
+      <BankVersionsListContent />
+    </Suspense>
+  );
+}
+
+function BankVersionsListContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [versions, setVersions] = useState<BankVersion[]>([]);
