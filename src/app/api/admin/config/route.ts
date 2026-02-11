@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 // Explicit column list bypasses PostgREST schema cache issues with SELECT *
 const PLAN_CONFIG_COLUMNS = [
   'id', 'created_at', 'updated_at',
