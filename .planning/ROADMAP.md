@@ -50,7 +50,7 @@ Plans:
 Plans:
 - [x] 10-01: Print Spacing Compression & Visual Refinement
 
-#### Phase 11: Admin Config Form UX
+#### Phase 11: Admin Config Form UX — Complete
 
 **Goal**: Redesign config form with better grouping, labels, descriptions, and editing flow
 **Depends on**: Phase 10
@@ -58,7 +58,7 @@ Plans:
 **Plans**: 1
 
 Plans:
-- [ ] 11-01: Collapsible Sections, Field Descriptions & Sticky Save Bar
+- [x] 11-01: Collapsible Sections, Field Descriptions & Sticky Save Bar
 
 #### Phase 12: Admin Dashboard & Navigation
 
@@ -94,6 +94,6 @@ Plans:
 | 8. Print Optimization & Deployment | v1.0 | 2/2 | Complete | 2026-02-10 |
 | 9. Public Page Design Polish | v1.1 | 2/2 | Complete | 2026-02-10 |
 | 10. Print & PDF Polish | v1.1 | 1/1 | Complete | 2026-02-10 |
-| 11. Admin Config Form UX | v1.1 | 0/1 | Not started | - |
+| 11. Admin Config Form UX | v1.1 | 1/1 | Complete | 2026-02-10 |
 | 12. Admin Dashboard & Navigation | v1.1 | 0/? | Not started | - |
 | 13. Bank Version Management UX | v1.1 | 0/? | Not started | - |
