@@ -21,6 +21,8 @@ interface FormData {
   total_head_override: number;
 }
 
+const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 export default function NewBankVersionPage() {
   const router = useRouter();
   const [defaults, setDefaults] = useState<ConfigData | null>(null);
@@ -162,9 +164,9 @@ export default function NewBankVersionPage() {
       const payload = {
         bank_name: formData.bank_name.trim(),
         slug: formData.slug,
-        line_of_credit_override: formData.use_custom_loc ? formData.line_of_credit_override : null,
-        interest_rate_pct_override: formData.use_custom_interest ? formData.interest_rate_pct_override : null,
-        total_head_override: formData.use_custom_head ? formData.total_head_override : null,
+        override_loc_amount: formData.use_custom_loc ? formData.line_of_credit_override : null,
+        override_interest_rate_pct: formData.use_custom_interest ? formData.interest_rate_pct_override : null,
+        override_head_count: formData.use_custom_head ? formData.total_head_override : null,
       };
 
       const response = await fetch('/api/admin/versions', {
@@ -256,6 +258,11 @@ export default function NewBankVersionPage() {
               <p className="mt-1 text-sm text-gray-500">
                 Auto-generated from bank name. Edit if needed.
               </p>
+              {formData.slug && slugPattern.test(formData.slug) && (
+                <p className="mt-1 text-sm text-gray-400">
+                  piercelandandcattle.com/plan/<span className="font-mono">{formData.slug}</span>
+                </p>
+              )}
               {errors.slug && (
                 <p className="mt-1 text-sm text-red-600">{errors.slug}</p>
               )}

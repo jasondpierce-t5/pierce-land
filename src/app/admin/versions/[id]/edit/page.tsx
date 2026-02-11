@@ -15,9 +15,9 @@ interface BankVersion {
   bank_name: string;
   slug: string;
   is_active: boolean;
-  line_of_credit_override: number | null;
-  interest_rate_pct_override: number | null;
-  total_head_override: number | null;
+  override_loc_amount: number | null;
+  override_interest_rate_pct: number | null;
+  override_head_count: number | null;
 }
 
 interface FormData {
@@ -30,6 +30,8 @@ interface FormData {
   use_custom_head: boolean;
   total_head_override: number;
 }
+
+const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export default function EditBankVersionPage() {
   const router = useRouter();
@@ -73,29 +75,25 @@ export default function EditBankVersionPage() {
   const fetchVersion = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/versions');
+      const response = await fetch(`/api/admin/versions/${versionId}`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch version');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to fetch version');
       }
 
-      const versions: BankVersion[] = await response.json();
-      const version = versions.find((v) => v.id === versionId);
-
-      if (!version) {
-        throw new Error('Version not found');
-      }
+      const version: BankVersion = await response.json();
 
       // Pre-fill form with existing data
       setFormData({
         bank_name: version.bank_name,
         slug: version.slug,
-        use_custom_loc: version.line_of_credit_override !== null,
-        line_of_credit_override: version.line_of_credit_override || 500000,
-        use_custom_interest: version.interest_rate_pct_override !== null,
-        interest_rate_pct_override: version.interest_rate_pct_override || 7.5,
-        use_custom_head: version.total_head_override !== null,
-        total_head_override: version.total_head_override || 250,
+        use_custom_loc: version.override_loc_amount !== null,
+        line_of_credit_override: version.override_loc_amount || 500000,
+        use_custom_interest: version.override_interest_rate_pct !== null,
+        interest_rate_pct_override: version.override_interest_rate_pct || 7.5,
+        use_custom_head: version.override_head_count !== null,
+        total_head_override: version.override_head_count || 250,
       });
     } catch (error) {
       setMessage({
@@ -159,7 +157,6 @@ export default function EditBankVersionPage() {
     if (!formData.slug.trim()) {
       newErrors.slug = 'URL slug is required';
     } else {
-      const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
       if (!slugPattern.test(formData.slug)) {
         newErrors.slug = 'Slug must be lowercase alphanumeric with hyphens only (e.g., "first-national-bank")';
       }
@@ -213,9 +210,9 @@ export default function EditBankVersionPage() {
       const payload = {
         bank_name: formData.bank_name.trim(),
         slug: formData.slug,
-        line_of_credit_override: formData.use_custom_loc ? formData.line_of_credit_override : null,
-        interest_rate_pct_override: formData.use_custom_interest ? formData.interest_rate_pct_override : null,
-        total_head_override: formData.use_custom_head ? formData.total_head_override : null,
+        override_loc_amount: formData.use_custom_loc ? formData.line_of_credit_override : null,
+        override_interest_rate_pct: formData.use_custom_interest ? formData.interest_rate_pct_override : null,
+        override_head_count: formData.use_custom_head ? formData.total_head_override : null,
       };
 
       const response = await fetch(`/api/admin/versions/${versionId}`, {
@@ -250,8 +247,43 @@ export default function EditBankVersionPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="text-gray-500">Loading version...</div>
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-6">
+          <div className="h-8 bg-gray-200 rounded w-56 animate-pulse"></div>
+          <div className="mt-2 h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
+        </div>
+        <div className="bg-white shadow-md rounded-lg p-6">
+          {/* Bank Information skeleton */}
+          <div className="mb-8">
+            <div className="h-6 bg-gray-200 rounded w-40 mb-4 animate-pulse"></div>
+            <div className="border-b-2 border-gray-200 mb-4"></div>
+            <div className="space-y-6">
+              <div>
+                <div className="h-4 bg-gray-200 rounded w-20 mb-2 animate-pulse"></div>
+                <div className="h-10 bg-gray-200 rounded w-full animate-pulse"></div>
+              </div>
+              <div>
+                <div className="h-4 bg-gray-200 rounded w-16 mb-2 animate-pulse"></div>
+                <div className="h-10 bg-gray-200 rounded w-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+          {/* Custom Values skeleton */}
+          <div className="mb-8">
+            <div className="h-6 bg-gray-200 rounded w-64 mb-4 animate-pulse"></div>
+            <div className="border-b-2 border-gray-200 mb-4"></div>
+            <div className="space-y-6">
+              <div className="h-5 bg-gray-200 rounded w-48 animate-pulse"></div>
+              <div className="h-5 bg-gray-200 rounded w-44 animate-pulse"></div>
+              <div className="h-5 bg-gray-200 rounded w-40 animate-pulse"></div>
+            </div>
+          </div>
+          {/* Actions skeleton */}
+          <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+            <div className="h-10 bg-gray-200 rounded w-24 animate-pulse"></div>
+            <div className="h-10 bg-gray-200 rounded w-40 animate-pulse"></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -315,6 +347,16 @@ export default function EditBankVersionPage() {
               <p className="mt-1 text-sm text-gray-500">
                 Edit slug if needed (use lowercase letters, numbers, and hyphens only).
               </p>
+              {formData.slug && slugPattern.test(formData.slug) && (
+                <p className="mt-1 text-sm text-gray-400">
+                  piercelandandcattle.com/plan/<a
+                    href={`/plan/${formData.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-accent hover:underline"
+                  >{formData.slug}</a>
+                </p>
+              )}
               {errors.slug && (
                 <p className="mt-1 text-sm text-red-600">{errors.slug}</p>
               )}
