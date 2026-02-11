@@ -1,12 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// Explicit column list bypasses PostgREST schema cache issues with SELECT *
+const PLAN_CONFIG_COLUMNS = [
+  'id', 'created_at', 'updated_at',
+  'operator_name', 'operation_location', 'acres', 'years_experience',
+  'market_price_500lb', 'market_price_850lb',
+  'sale_price_low_per_cwt', 'sale_price_high_per_cwt',
+  'hay_price_per_ton', 'feed_cost_per_day',
+  'purchase_weight_lbs', 'sale_weight_lbs', 'avg_daily_gain_lbs', 'mortality_rate_pct',
+  'spring_sale_weight_lbs', 'spring_days_on_feed',
+  'spring_health_cost_per_head', 'spring_freight_in_per_head',
+  'spring_mineral_cost_per_head', 'spring_lrp_premium_per_head',
+  'spring_marketing_commission_per_head', 'spring_freight_out_per_head',
+  'spring_death_loss_pct', 'spring_misc_per_head',
+  'winter_sale_weight_lbs', 'winter_days_on_feed',
+  'winter_health_cost_per_head', 'winter_freight_in_per_head',
+  'winter_mineral_cost_per_head', 'winter_lrp_premium_per_head',
+  'winter_marketing_commission_per_head', 'winter_freight_out_per_head',
+  'winter_death_loss_pct', 'winter_misc_per_head',
+  'hay_price_per_bale', 'hay_bale_weight_lbs', 'hay_waste_pct', 'commodity_price_per_ton',
+  'spring_hay_daily_intake_lbs', 'spring_commodity_daily_intake_lbs',
+  'hay_daily_intake_lbs', 'commodity_daily_intake_lbs',
+  'interest_rate_pct', 'loc_amount', 'head_count',
+  'sell_buy_margin_pct',
+].join(', ');
+
 export async function GET() {
   try {
     // Query singleton config row
     const { data, error } = await supabase
       .from('plan_config')
-      .select('*')
+      .select(PLAN_CONFIG_COLUMNS)
       .single();
 
     if (error) {
@@ -75,13 +100,17 @@ export async function PUT(request: NextRequest) {
       'winter_freight_out_per_head',
       'winter_death_loss_pct',
       'winter_misc_per_head',
-      // Winter feed (6)
+      // Feed details (8)
       'hay_price_per_bale',
       'hay_bale_weight_lbs',
       'hay_daily_intake_lbs',
       'hay_waste_pct',
       'commodity_price_per_ton',
       'commodity_daily_intake_lbs',
+      'spring_hay_daily_intake_lbs',
+      'spring_commodity_daily_intake_lbs',
+      // Sell/buy marketing (1)
+      'sell_buy_margin_pct',
     ];
 
     const missingFields = requiredFields.filter((field) => !(field in body));
@@ -147,12 +176,16 @@ export async function PUT(request: NextRequest) {
       'winter_freight_out_per_head',
       'winter_death_loss_pct',
       'winter_misc_per_head',
-      // Winter feed
+      // Feed details
       'hay_price_per_bale',
       'hay_daily_intake_lbs',
       'hay_waste_pct',
       'commodity_price_per_ton',
       'commodity_daily_intake_lbs',
+      'spring_hay_daily_intake_lbs',
+      'spring_commodity_daily_intake_lbs',
+      // Sell/buy marketing
+      'sell_buy_margin_pct',
     ];
 
     for (const field of numericFields) {
@@ -247,6 +280,7 @@ export async function PUT(request: NextRequest) {
       'spring_death_loss_pct',
       'winter_death_loss_pct',
       'hay_waste_pct',
+      'sell_buy_margin_pct',
     ];
 
     for (const field of percentageFields) {
@@ -312,13 +346,17 @@ export async function PUT(request: NextRequest) {
       winter_freight_out_per_head: body.winter_freight_out_per_head,
       winter_death_loss_pct: body.winter_death_loss_pct,
       winter_misc_per_head: body.winter_misc_per_head,
-      // Winter feed
+      // Feed details
       hay_price_per_bale: body.hay_price_per_bale,
       hay_bale_weight_lbs: body.hay_bale_weight_lbs,
       hay_daily_intake_lbs: body.hay_daily_intake_lbs,
       hay_waste_pct: body.hay_waste_pct,
       commodity_price_per_ton: body.commodity_price_per_ton,
       commodity_daily_intake_lbs: body.commodity_daily_intake_lbs,
+      spring_hay_daily_intake_lbs: body.spring_hay_daily_intake_lbs,
+      spring_commodity_daily_intake_lbs: body.spring_commodity_daily_intake_lbs,
+      // Sell/buy marketing
+      sell_buy_margin_pct: body.sell_buy_margin_pct,
     };
 
     // Include optional operator info fields if provided
@@ -340,7 +378,7 @@ export async function PUT(request: NextRequest) {
       .from('plan_config')
       .update(updateData)
       .eq('id', currentConfig.id)
-      .select()
+      .select(PLAN_CONFIG_COLUMNS)
       .single();
 
     if (error) {

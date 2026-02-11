@@ -46,13 +46,19 @@ interface ConfigData {
   winter_freight_out_per_head: number;
   winter_death_loss_pct: number;
   winter_misc_per_head: number;
-  // Winter feed
+  // Feed details — shared pricing
   hay_price_per_bale: number;
   hay_bale_weight_lbs: number;
-  hay_daily_intake_lbs: number;
   hay_waste_pct: number;
   commodity_price_per_ton: number;
+  // Feed details — spring intake
+  spring_hay_daily_intake_lbs: number;
+  spring_commodity_daily_intake_lbs: number;
+  // Feed details — winter intake
+  hay_daily_intake_lbs: number;
   commodity_daily_intake_lbs: number;
+  // Sell/buy marketing
+  sell_buy_margin_pct: number;
 }
 
 // Helper type for fields that can be string or number
@@ -66,7 +72,8 @@ const SECTION_NAMES = [
   'operational-params',
   'spring-turn',
   'winter-turn',
-  'winter-feed',
+  'feed-details',
+  'sell-buy',
   'financial-defaults',
 ] as const;
 
@@ -342,6 +349,9 @@ export default function ConfigPage() {
       'hay_waste_pct',
       'commodity_price_per_ton',
       'commodity_daily_intake_lbs',
+      'spring_hay_daily_intake_lbs',
+      'spring_commodity_daily_intake_lbs',
+      'sell_buy_margin_pct',
     ];
 
     for (const field of positiveNumericFields) {
@@ -385,6 +395,7 @@ export default function ConfigPage() {
       'spring_death_loss_pct',
       'winter_death_loss_pct',
       'hay_waste_pct',
+      'sell_buy_margin_pct',
     ];
 
     for (const field of percentageFields) {
@@ -606,21 +617,51 @@ export default function ConfigPage() {
           </div>
         </CollapsibleSection>
 
-        {/* Section 7: Winter Feed Details */}
+        {/* Section 7: Feed Details */}
         <CollapsibleSection
-          name="winter-feed"
-          title="Winter Feed Details"
-          description="Hay and commodity feed pricing, intake rates, and waste factors for winter cost calculations"
-          isOpen={openSections.has('winter-feed')}
+          name="feed-details"
+          title="Feed Details"
+          description="Hay and commodity pricing (shared), plus per-turn daily intake rates"
+          isOpen={openSections.has('feed-details')}
+          onToggle={toggleSection}
+        >
+          <div className="space-y-6">
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-3">Shared Pricing</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <NumberInput field="hay_price_per_bale" label="Hay Price" unit="$/bale" value={formData.hay_price_per_bale} onChange={handleChange} error={errors.hay_price_per_bale} />
+                <NumberInput field="hay_bale_weight_lbs" label="Bale Weight" step="1" unit="lbs" value={formData.hay_bale_weight_lbs} onChange={handleChange} error={errors.hay_bale_weight_lbs} />
+                <NumberInput field="hay_waste_pct" label="Hay Waste" unit="%" value={formData.hay_waste_pct} onChange={handleChange} error={errors.hay_waste_pct} description="Percentage lost to weather, trampling, spoilage" />
+                <NumberInput field="commodity_price_per_ton" label="Commodity Price" unit="$/ton" value={formData.commodity_price_per_ton} onChange={handleChange} error={errors.commodity_price_per_ton} description="Supplemental feed (grain/pellets) price" />
+              </div>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-3">Spring Intake</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <NumberInput field="spring_hay_daily_intake_lbs" label="Daily Hay Intake" step="0.1" unit="lbs/day" value={formData.spring_hay_daily_intake_lbs} onChange={handleChange} error={errors.spring_hay_daily_intake_lbs} />
+                <NumberInput field="spring_commodity_daily_intake_lbs" label="Daily Commodity Intake" step="0.1" unit="lbs/day" value={formData.spring_commodity_daily_intake_lbs} onChange={handleChange} error={errors.spring_commodity_daily_intake_lbs} />
+              </div>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-3">Winter Intake</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <NumberInput field="hay_daily_intake_lbs" label="Daily Hay Intake" step="0.1" unit="lbs/day" value={formData.hay_daily_intake_lbs} onChange={handleChange} error={errors.hay_daily_intake_lbs} />
+                <NumberInput field="commodity_daily_intake_lbs" label="Daily Commodity Intake" step="0.1" unit="lbs/day" value={formData.commodity_daily_intake_lbs} onChange={handleChange} error={errors.commodity_daily_intake_lbs} description="Pounds of supplement fed per head per day" />
+              </div>
+            </div>
+          </div>
+        </CollapsibleSection>
+
+        {/* Section 8: Sell/Buy Marketing */}
+        <CollapsibleSection
+          name="sell-buy"
+          title="Sell/Buy Marketing"
+          description="Protected margin percentage kept at each sale — remainder reinvests into lighter replacement cattle"
+          isOpen={openSections.has('sell-buy')}
           onToggle={toggleSection}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NumberInput field="hay_price_per_bale" label="Hay Price" unit="$/bale" value={formData.hay_price_per_bale} onChange={handleChange} error={errors.hay_price_per_bale} />
-            <NumberInput field="hay_bale_weight_lbs" label="Bale Weight" step="1" unit="lbs" value={formData.hay_bale_weight_lbs} onChange={handleChange} error={errors.hay_bale_weight_lbs} />
-            <NumberInput field="hay_daily_intake_lbs" label="Daily Hay Intake" step="0.1" unit="lbs/day" value={formData.hay_daily_intake_lbs} onChange={handleChange} error={errors.hay_daily_intake_lbs} />
-            <NumberInput field="hay_waste_pct" label="Hay Waste" unit="%" value={formData.hay_waste_pct} onChange={handleChange} error={errors.hay_waste_pct} description="Percentage lost to weather, trampling, spoilage" />
-            <NumberInput field="commodity_price_per_ton" label="Commodity Price" unit="$/ton" value={formData.commodity_price_per_ton} onChange={handleChange} error={errors.commodity_price_per_ton} description="Supplemental feed (grain/pellets) price" />
-            <NumberInput field="commodity_daily_intake_lbs" label="Daily Commodity Intake" step="0.1" unit="lbs/day" value={formData.commodity_daily_intake_lbs} onChange={handleChange} error={errors.commodity_daily_intake_lbs} description="Pounds of supplement fed per head per day" />
+            <NumberInput field="sell_buy_margin_pct" label="Protected Margin" unit="%" value={formData.sell_buy_margin_pct} onChange={handleChange} error={errors.sell_buy_margin_pct} description="Percentage of gross revenue kept as margin at each sale" />
           </div>
         </CollapsibleSection>
 

@@ -62,18 +62,23 @@ export interface PlanConfig {
   winter_death_loss_pct: number;
   winter_misc_per_head: number;
 
-  // Winter Feed Details (6 fields)
+  // Feed Details — shared pricing, per-turn intake rates
   hay_price_per_bale: number;
   hay_bale_weight_lbs: number;
-  hay_daily_intake_lbs: number;
   hay_waste_pct: number;
   commodity_price_per_ton: number;
-  commodity_daily_intake_lbs: number;
+  spring_hay_daily_intake_lbs: number;
+  spring_commodity_daily_intake_lbs: number;
+  hay_daily_intake_lbs: number;         // winter hay intake
+  commodity_daily_intake_lbs: number;   // winter commodity intake
 
   // Financial Defaults (3 original fields)
   interest_rate_pct: number;
   loc_amount: number;
   head_count: number;
+
+  // Sell/Buy Marketing
+  sell_buy_margin_pct: number;
 }
 
 /**
@@ -97,8 +102,9 @@ export interface PlanVersion {
 // =============================================================================
 
 /**
- * Per-head result for a single turn (spring or winter base).
+ * Per-head result for a single turn (spring or winter).
  * All values are per-head unless otherwise noted.
+ * Both turns include feed cost breakdown.
  */
 export interface TurnResult {
   purchaseCost: number;
@@ -111,12 +117,7 @@ export interface TurnResult {
   grossRevenue: number;
   netIncome: number;
   costOfGain: number;
-}
-
-/**
- * Winter turn extends base TurnResult with feed cost breakdown.
- */
-export interface WinterTurnResult extends TurnResult {
+  // Feed breakdown
   hayPricePerLb: number;
   hayConsumed: number;
   hayCost: number;
@@ -126,13 +127,31 @@ export interface WinterTurnResult extends TurnResult {
 }
 
 /**
- * Annual projection combining spring and winter turns with head count.
+ * Result of a sell/buy marketing cycle after a turn completes.
+ * Operator keeps margin_pct% as protected margin, reinvests the rest.
+ */
+export interface SellBuyResult {
+  headCount: number;
+  totalGrossRevenue: number;
+  protectedMargin: number;
+  reinvestmentPool: number;
+  purchaseCostPerHead: number;
+  nextHeadCount: number;
+}
+
+/**
+ * Annual projection combining sequential spring → sell/buy → winter turns.
  */
 export interface AnnualProjection {
+  springHeadCount: number;
   springTotal: number;
+  springSellBuy: SellBuyResult;
+  winterHeadCount: number;
   winterTotal: number;
+  winterSellBuy: SellBuyResult;
   annualNetIncome: number;
   totalRevenue: number;
+  totalProtectedMargin: number;
   totalInvestment: number;
   locUtilization: number;
   locCapacityRemaining: number;
@@ -150,7 +169,10 @@ export interface ScenarioResult {
   salePriceCwt: number;
   springNet: number;
   winterNet: number;
+  springHeadCount: number;
+  winterHeadCount: number;
   annualNet: number;
+  totalProtectedMargin: number;
 }
 
 /**

@@ -3,7 +3,7 @@
 /**
  * ScenarioChart — Grouped bar chart comparing Low/Mid/High price scenarios.
  *
- * Shows spring net/head, winter net/head, and annual net for each scenario
+ * Shows spring net/head, winter net/head, and combined net/head for each scenario
  * so bankers can quickly visualize upside and downside risk.
  */
 
@@ -18,13 +18,11 @@ interface ScenarioChartProps {
     mid: ScenarioResult;
     high: ScenarioResult;
   };
-  headCount: number;
 }
 
-export default function ScenarioChart({ scenarios, headCount }: ScenarioChartProps) {
-  const labels = ['Spring Net/Head', 'Winter Net/Head', 'Annual Net/Head'];
+export default function ScenarioChart({ scenarios }: ScenarioChartProps) {
+  const labels = ['Spring Net/Head', 'Winter Net/Head', 'Combined Net/Head'];
 
-  const hc = headCount > 0 ? headCount : 1;
   const data = {
     labels,
     datasets: [
@@ -33,7 +31,7 @@ export default function ScenarioChart({ scenarios, headCount }: ScenarioChartPro
         data: [
           scenarios.low.springNet,
           scenarios.low.winterNet,
-          scenarios.low.annualNet / hc,
+          scenarios.low.springNet + scenarios.low.winterNet,
         ],
         backgroundColor: SCENARIO_COLORS.low,
       },
@@ -42,7 +40,7 @@ export default function ScenarioChart({ scenarios, headCount }: ScenarioChartPro
         data: [
           scenarios.mid.springNet,
           scenarios.mid.winterNet,
-          scenarios.mid.annualNet / hc,
+          scenarios.mid.springNet + scenarios.mid.winterNet,
         ],
         backgroundColor: SCENARIO_COLORS.mid,
       },
@@ -51,7 +49,7 @@ export default function ScenarioChart({ scenarios, headCount }: ScenarioChartPro
         data: [
           scenarios.high.springNet,
           scenarios.high.winterNet,
-          scenarios.high.annualNet / hc,
+          scenarios.high.springNet + scenarios.high.winterNet,
         ],
         backgroundColor: SCENARIO_COLORS.high,
       },

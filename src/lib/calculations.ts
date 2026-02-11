@@ -5,13 +5,17 @@
  * All financial values are per-head unless explicitly noted.
  * Prices labeled "per cwt" are per 100 lbs — divide by 100 for per-lb rate.
  * No rounding at calculation level — consumers decide display precision.
+ *
+ * Sell/buy marketing model: after each turn, operator keeps margin_pct% of
+ * gross revenue and reinvests the rest into lighter replacement cattle.
+ * Winter head count is derived from spring sell/buy proceeds.
  */
 
 import type {
   PlanConfig,
   PlanVersion,
   TurnResult,
-  WinterTurnResult,
+  SellBuyResult,
   AnnualProjection,
   ScenarioAnalysis,
   HaySensitivityTable,
@@ -48,36 +52,30 @@ export function mergeConfig(
 
 /**
  * Calculate per-head financials for the spring turn.
- *
- * Formula summary:
- *   purchaseCost    = purchase_weight_lbs x (market_price_500lb / 100)
- *   weightGain      = spring_sale_weight_lbs - purchase_weight_lbs
- *   interestCost    = purchaseCost x (interest_rate_pct / 100) x (daysOnFeed / 365)
- *   deathLoss       = purchaseCost x (spring_death_loss_pct / 100)
- *   carryingCosts   = sum of all per-head costs + interest + death loss
- *   totalInvestment = purchaseCost + carryingCosts
- *   grossRevenue    = spring_sale_weight_lbs x (market_price_850lb / 100)
- *   netIncome       = grossRevenue - totalInvestment
- *   costOfGain      = carryingCosts / weightGain  (guarded against division by zero)
+ * Includes feed cost breakdown (hay + commodity) using shared pricing
+ * with spring-specific daily intake rates.
  */
 export function calculateSpringTurn(config: PlanConfig): TurnResult {
-  // Purchase cost (price is per cwt, so divide by 100 to get per-lb rate)
   const purchaseCost = config.purchase_weight_lbs * (config.market_price_500lb / 100);
-
-  // Weight gain
   const weightGain = config.spring_sale_weight_lbs - config.purchase_weight_lbs;
-
-  // Days on feed
   const daysOnFeed = config.spring_days_on_feed;
 
-  // Interest cost (annualized)
   const interestCost =
     purchaseCost * (config.interest_rate_pct / 100) * (daysOnFeed / 365);
-
-  // Death loss
   const deathLoss = purchaseCost * (config.spring_death_loss_pct / 100);
 
-  // Sum all carrying costs
+  // Feed costs (shared prices, spring-specific intake rates)
+  const hayPricePerLb =
+    config.hay_bale_weight_lbs > 0
+      ? config.hay_price_per_bale / config.hay_bale_weight_lbs
+      : 0;
+  const hayConsumed = config.spring_hay_daily_intake_lbs * daysOnFeed;
+  const hayCost = hayConsumed * hayPricePerLb;
+  const hayWaste = hayCost * (config.hay_waste_pct / 100);
+  const commodityCost =
+    config.spring_commodity_daily_intake_lbs * daysOnFeed * (config.commodity_price_per_ton / 2000);
+  const totalFeedCost = hayCost + hayWaste + commodityCost;
+
   const carryingCosts =
     config.spring_health_cost_per_head +
     config.spring_freight_in_per_head +
@@ -87,31 +85,18 @@ export function calculateSpringTurn(config: PlanConfig): TurnResult {
     config.spring_freight_out_per_head +
     interestCost +
     deathLoss +
-    config.spring_misc_per_head;
+    config.spring_misc_per_head +
+    totalFeedCost;
 
-  // Total investment per head
   const totalInvestment = purchaseCost + carryingCosts;
-
-  // Gross revenue per head (sale weight x mid price per cwt)
   const grossRevenue = config.spring_sale_weight_lbs * (config.market_price_850lb / 100);
-
-  // Net income per head
   const netIncome = grossRevenue - totalInvestment;
-
-  // Cost of gain (division-by-zero guard)
   const costOfGain = weightGain > 0 ? carryingCosts / weightGain : 0;
 
   return {
-    purchaseCost,
-    weightGain,
-    daysOnFeed,
-    interestCost,
-    deathLoss,
-    carryingCosts,
-    totalInvestment,
-    grossRevenue,
-    netIncome,
-    costOfGain,
+    purchaseCost, weightGain, daysOnFeed, interestCost, deathLoss,
+    carryingCosts, totalInvestment, grossRevenue, netIncome, costOfGain,
+    hayPricePerLb, hayConsumed, hayCost, hayWaste, commodityCost, totalFeedCost,
   };
 }
 
@@ -121,33 +106,18 @@ export function calculateSpringTurn(config: PlanConfig): TurnResult {
 
 /**
  * Calculate per-head financials for the winter turn.
- * Same base structure as spring but adds feed cost breakdown:
- *   hayPricePerLb  = hay_price_per_bale / hay_bale_weight_lbs
- *   hayConsumed    = hay_daily_intake_lbs x winter_days_on_feed
- *   hayCost        = hayConsumed x hayPricePerLb
- *   hayWaste       = hayCost x (hay_waste_pct / 100)
- *   commodityCost  = commodity_daily_intake_lbs x days x (commodity_price_per_ton / 2000)
- *   totalFeedCost  = hayCost + hayWaste + commodityCost
- *   carryingCosts  = winter ops costs + totalFeedCost
+ * Uses shared hay/commodity pricing with winter-specific intake rates.
  */
-export function calculateWinterTurn(config: PlanConfig): WinterTurnResult {
-  // Purchase cost (same as spring — same purchase weight and price)
+export function calculateWinterTurn(config: PlanConfig): TurnResult {
   const purchaseCost = config.purchase_weight_lbs * (config.market_price_500lb / 100);
-
-  // Weight gain (winter uses winter_sale_weight_lbs)
   const weightGain = config.winter_sale_weight_lbs - config.purchase_weight_lbs;
-
-  // Days on feed (winter)
   const daysOnFeed = config.winter_days_on_feed;
 
-  // Interest cost
   const interestCost =
     purchaseCost * (config.interest_rate_pct / 100) * (daysOnFeed / 365);
-
-  // Death loss (winter rate)
   const deathLoss = purchaseCost * (config.winter_death_loss_pct / 100);
 
-  // Feed costs (winter-specific)
+  // Feed costs (shared prices, winter-specific intake rates)
   const hayPricePerLb =
     config.hay_bale_weight_lbs > 0
       ? config.hay_price_per_bale / config.hay_bale_weight_lbs
@@ -159,7 +129,6 @@ export function calculateWinterTurn(config: PlanConfig): WinterTurnResult {
     config.commodity_daily_intake_lbs * daysOnFeed * (config.commodity_price_per_ton / 2000);
   const totalFeedCost = hayCost + hayWaste + commodityCost;
 
-  // Sum all carrying costs (winter operations + feed)
   const carryingCosts =
     config.winter_health_cost_per_head +
     config.winter_freight_in_per_head +
@@ -172,78 +141,104 @@ export function calculateWinterTurn(config: PlanConfig): WinterTurnResult {
     config.winter_misc_per_head +
     totalFeedCost;
 
-  // Total investment per head
   const totalInvestment = purchaseCost + carryingCosts;
-
-  // Gross revenue per head (winter sale weight x mid price per cwt)
   const grossRevenue = config.winter_sale_weight_lbs * (config.market_price_850lb / 100);
-
-  // Net income per head
   const netIncome = grossRevenue - totalInvestment;
-
-  // Cost of gain (division-by-zero guard)
   const costOfGain = weightGain > 0 ? carryingCosts / weightGain : 0;
 
   return {
-    purchaseCost,
-    weightGain,
-    daysOnFeed,
-    interestCost,
-    deathLoss,
-    carryingCosts,
-    totalInvestment,
-    grossRevenue,
-    netIncome,
-    costOfGain,
-    // Winter-specific feed breakdown
-    hayPricePerLb,
-    hayConsumed,
-    hayCost,
-    hayWaste,
-    commodityCost,
-    totalFeedCost,
+    purchaseCost, weightGain, daysOnFeed, interestCost, deathLoss,
+    carryingCosts, totalInvestment, grossRevenue, netIncome, costOfGain,
+    hayPricePerLb, hayConsumed, hayCost, hayWaste, commodityCost, totalFeedCost,
   };
 }
 
 // =============================================================================
-// Annual projections
+// Sell/buy marketing
 // =============================================================================
 
 /**
- * Combine spring and winter per-head results into annual totals.
- * Multiplies per-head values by head_count for herd-level numbers.
- * Tracks LOC utilization against the configured line of credit.
+ * Calculate sell/buy marketing cycle after a turn completes.
+ * Operator keeps margin_pct% as protected margin and reinvests the rest
+ * into lighter replacement cattle at the current purchase price.
+ */
+export function calculateSellBuy(
+  turnResult: TurnResult,
+  headCount: number,
+  config: PlanConfig
+): SellBuyResult {
+  const totalGrossRevenue = turnResult.grossRevenue * headCount;
+  const marginPct = config.sell_buy_margin_pct / 100;
+  const protectedMargin = totalGrossRevenue * marginPct;
+  const reinvestmentPool = totalGrossRevenue - protectedMargin;
+  const purchaseCostPerHead =
+    config.purchase_weight_lbs * (config.market_price_500lb / 100);
+  const nextHeadCount = purchaseCostPerHead > 0
+    ? Math.floor(reinvestmentPool / purchaseCostPerHead)
+    : 0;
+
+  return {
+    headCount,
+    totalGrossRevenue,
+    protectedMargin,
+    reinvestmentPool,
+    purchaseCostPerHead,
+    nextHeadCount,
+  };
+}
+
+// =============================================================================
+// Annual projections (sequential sell/buy model)
+// =============================================================================
+
+/**
+ * Combine spring and winter turns with sell/buy marketing.
+ * Spring uses config head_count (funded by LOC).
+ * Winter head count is derived from spring sell/buy proceeds.
+ * LOC only funds the initial spring purchase.
  */
 export function calculateAnnualProjections(
   spring: TurnResult,
-  winter: WinterTurnResult,
+  winter: TurnResult,
   config: PlanConfig
 ): AnnualProjection {
-  const headCount = config.head_count;
+  // Spring turn uses config head_count (funded by LOC)
+  const springHeadCount = config.head_count;
+  const springTotal = spring.netIncome * springHeadCount;
 
-  // Total net income (spring + winter) x head count
-  const springTotal = spring.netIncome * headCount;
-  const winterTotal = winter.netIncome * headCount;
+  // Sell/buy after spring → derives winter head count
+  const springSellBuy = calculateSellBuy(spring, springHeadCount, config);
+  const winterHeadCount = springSellBuy.nextHeadCount;
+
+  // Winter turn uses derived head count
+  const winterTotal = winter.netIncome * winterHeadCount;
+
+  // Sell/buy after winter → shows next-year potential
+  const winterSellBuy = calculateSellBuy(winter, winterHeadCount, config);
+
+  // Annual totals
   const annualNetIncome = springTotal + winterTotal;
-
-  // Total revenue
   const totalRevenue =
-    spring.grossRevenue * headCount + winter.grossRevenue * headCount;
+    spring.grossRevenue * springHeadCount + winter.grossRevenue * winterHeadCount;
+  const totalProtectedMargin =
+    springSellBuy.protectedMargin + winterSellBuy.protectedMargin;
 
-  // Peak capital required (turns are sequential, never simultaneous)
-  const totalInvestment =
-    Math.max(spring.totalInvestment, winter.totalInvestment) * headCount;
-
-  // LOC utilization (percentage of line of credit used)
+  // LOC funds ONLY the initial spring purchase (sell/buy self-funds winter)
+  const totalInvestment = spring.totalInvestment * springHeadCount;
   const locUtilization =
     config.loc_amount > 0 ? (totalInvestment / config.loc_amount) * 100 : 0;
   const locCapacityRemaining = config.loc_amount - totalInvestment;
 
   return {
+    springHeadCount,
     springTotal,
+    springSellBuy,
+    winterHeadCount,
     winterTotal,
+    winterSellBuy,
     annualNetIncome,
     totalRevenue,
+    totalProtectedMargin,
     totalInvestment,
     locUtilization,
     locCapacityRemaining,
@@ -254,13 +249,6 @@ export function calculateAnnualProjections(
 // Breakeven calculations
 // =============================================================================
 
-/**
- * Calculate breakeven sale price per cwt for a turn.
- * Breakeven is the price at which netIncome = 0:
- *   breakeven_per_cwt = (totalInvestment / saleWeightLbs) * 100
- *
- * Division-by-zero guard: returns 0 if saleWeight is 0.
- */
 export function calculateBreakeven(
   totalInvestment: number,
   saleWeightLbs: number
@@ -268,13 +256,9 @@ export function calculateBreakeven(
   return saleWeightLbs > 0 ? (totalInvestment / saleWeightLbs) * 100 : 0;
 }
 
-/**
- * Get breakeven sale prices for both spring and winter turns.
- * Returns per-cwt prices that would yield zero net income.
- */
 export function getBreakevenPrices(
   spring: TurnResult,
-  winter: WinterTurnResult,
+  winter: TurnResult,
   config: PlanConfig
 ): { springBreakeven: number; winterBreakeven: number } {
   return {
@@ -290,72 +274,51 @@ export function getBreakevenPrices(
 }
 
 // =============================================================================
-// Scenario analysis
+// Scenario analysis (with sell/buy derived head counts)
 // =============================================================================
 
 /**
- * Calculate turn results at a specific sale price.
- * Creates modified config with custom sale price, then runs calculations.
- */
-function calculateTurnAtPrice(
-  config: PlanConfig,
-  salePriceCwt: number,
-  turnType: 'spring' | 'winter'
-): TurnResult | WinterTurnResult {
-  // Create modified config with custom sale price
-  const modifiedConfig = {
-    ...config,
-    market_price_850lb: salePriceCwt, // Override mid price with scenario price
-  };
-
-  return turnType === 'spring'
-    ? calculateSpringTurn(modifiedConfig)
-    : calculateWinterTurn(modifiedConfig);
-}
-
-/**
  * Calculate financial projections across low/mid/high price scenarios.
+ * Each scenario derives its own winter head count via sell/buy.
  */
 export function calculateScenarios(config: PlanConfig): ScenarioAnalysis {
-  const headCount = config.head_count;
+  function runScenario(
+    salePriceCwt: number,
+    label: 'low' | 'mid' | 'high'
+  ): import('./types').ScenarioResult {
+    const modifiedConfig = { ...config, market_price_850lb: salePriceCwt };
 
-  // Low scenario
-  const springLow = calculateTurnAtPrice(config, config.sale_price_low_per_cwt, 'spring') as TurnResult;
-  const winterLow = calculateTurnAtPrice(config, config.sale_price_low_per_cwt, 'winter') as WinterTurnResult;
-  const lowAnnual = (springLow.netIncome * headCount) + (winterLow.netIncome * headCount);
+    const springResult = calculateSpringTurn(modifiedConfig);
+    const winterResult = calculateWinterTurn(modifiedConfig);
 
-  // Mid scenario (base case — uses market_price_850lb)
-  const springMid = calculateSpringTurn(config);
-  const winterMid = calculateWinterTurn(config);
-  const midAnnual = (springMid.netIncome * headCount) + (winterMid.netIncome * headCount);
+    const springHeadCount = config.head_count;
+    const springSellBuy = calculateSellBuy(springResult, springHeadCount, modifiedConfig);
+    const winterHeadCount = springSellBuy.nextHeadCount;
 
-  // High scenario
-  const springHigh = calculateTurnAtPrice(config, config.sale_price_high_per_cwt, 'spring') as TurnResult;
-  const winterHigh = calculateTurnAtPrice(config, config.sale_price_high_per_cwt, 'winter') as WinterTurnResult;
-  const highAnnual = (springHigh.netIncome * headCount) + (winterHigh.netIncome * headCount);
+    const annualNet =
+      (springResult.netIncome * springHeadCount) +
+      (winterResult.netIncome * winterHeadCount);
+
+    const winterSellBuy = calculateSellBuy(winterResult, winterHeadCount, modifiedConfig);
+    const totalProtectedMargin =
+      springSellBuy.protectedMargin + winterSellBuy.protectedMargin;
+
+    return {
+      scenario: label,
+      salePriceCwt,
+      springNet: springResult.netIncome,
+      winterNet: winterResult.netIncome,
+      springHeadCount,
+      winterHeadCount,
+      annualNet,
+      totalProtectedMargin,
+    };
+  }
 
   return {
-    low: {
-      scenario: 'low',
-      salePriceCwt: config.sale_price_low_per_cwt,
-      springNet: springLow.netIncome,
-      winterNet: winterLow.netIncome,
-      annualNet: lowAnnual,
-    },
-    mid: {
-      scenario: 'mid',
-      salePriceCwt: config.market_price_850lb,
-      springNet: springMid.netIncome,
-      winterNet: winterMid.netIncome,
-      annualNet: midAnnual,
-    },
-    high: {
-      scenario: 'high',
-      salePriceCwt: config.sale_price_high_per_cwt,
-      springNet: springHigh.netIncome,
-      winterNet: winterHigh.netIncome,
-      annualNet: highAnnual,
-    },
+    low: runScenario(config.sale_price_low_per_cwt, 'low'),
+    mid: runScenario(config.market_price_850lb, 'mid'),
+    high: runScenario(config.sale_price_high_per_cwt, 'high'),
   };
 }
 
@@ -365,8 +328,7 @@ export function calculateScenarios(config: PlanConfig): ScenarioAnalysis {
 
 /**
  * Calculate hay price sensitivity for winter turn.
- * Shows how winter profitability changes across hay price range.
- * Default range: $40 to $80 per bale in $10 increments (from project.md).
+ * Uses sell/buy-derived winter head count for totals.
  */
 export function calculateHaySensitivity(
   config: PlanConfig,
@@ -375,23 +337,23 @@ export function calculateHaySensitivity(
   increment: number = 10
 ): HaySensitivityTable {
   const results: HaySensitivityTable = [];
-  const headCount = config.head_count;
+  const springHeadCount = config.head_count;
 
   for (let hayPrice = minPrice; hayPrice <= maxPrice; hayPrice += increment) {
-    // Create modified config with custom hay price
-    const modifiedConfig = {
-      ...config,
-      hay_price_per_bale: hayPrice,
-    };
+    const modifiedConfig = { ...config, hay_price_per_bale: hayPrice };
 
-    // Recalculate winter turn with modified hay price
+    // Hay price affects spring feed too, but spring sell/buy determines winter head count
+    const springResult = calculateSpringTurn(modifiedConfig);
+    const springSellBuy = calculateSellBuy(springResult, springHeadCount, modifiedConfig);
+    const winterHeadCount = springSellBuy.nextHeadCount;
+
     const winterResult = calculateWinterTurn(modifiedConfig);
 
     results.push({
       hayPricePerBale: hayPrice,
       totalFeedCost: winterResult.totalFeedCost,
       winterNetPerHead: winterResult.netIncome,
-      winterNetTotal: winterResult.netIncome * headCount,
+      winterNetTotal: winterResult.netIncome * winterHeadCount,
     });
   }
 
@@ -404,8 +366,7 @@ export function calculateHaySensitivity(
 
 /**
  * Calculate purchase price sensitivity for both turns.
- * Shows how profitability changes across purchase price range.
- * Default range: base price +/- $0.20/lb in $0.10 increments (from project.md).
+ * Uses sell/buy-derived winter head count for annual totals.
  */
 export function calculatePurchaseSensitivity(
   config: PlanConfig,
@@ -413,27 +374,27 @@ export function calculatePurchaseSensitivity(
   incrementPerLb: number = 0.10
 ): PurchaseSensitivityTable {
   const results: PurchaseSensitivityTable = [];
-  const headCount = config.head_count;
+  const springHeadCount = config.head_count;
   const basePriceCwt = config.market_price_500lb;
 
-  // Convert lb to cwt for iteration (range +/-$20 per cwt if +/-$0.20/lb)
   const rangeCwt = rangePerLb * 100;
   const incrementCwt = incrementPerLb * 100;
-
   const minPrice = basePriceCwt - rangeCwt;
   const maxPrice = basePriceCwt + rangeCwt;
 
   for (let purchasePrice = minPrice; purchasePrice <= maxPrice; purchasePrice += incrementCwt) {
-    // Create modified config with custom purchase price
-    const modifiedConfig = {
-      ...config,
-      market_price_500lb: purchasePrice,
-    };
+    const modifiedConfig = { ...config, market_price_500lb: purchasePrice };
 
-    // Recalculate both turns with modified purchase price
     const springResult = calculateSpringTurn(modifiedConfig);
     const winterResult = calculateWinterTurn(modifiedConfig);
-    const annualNet = (springResult.netIncome * headCount) + (winterResult.netIncome * headCount);
+
+    // Derive winter head count via sell/buy
+    const springSellBuy = calculateSellBuy(springResult, springHeadCount, modifiedConfig);
+    const winterHeadCount = springSellBuy.nextHeadCount;
+
+    const annualNet =
+      (springResult.netIncome * springHeadCount) +
+      (winterResult.netIncome * winterHeadCount);
 
     results.push({
       purchasePriceCwt: purchasePrice,
@@ -452,20 +413,26 @@ export function calculatePurchaseSensitivity(
 
 /**
  * Calculate worst-case scenario: highest purchase price + lowest sale price.
+ * Uses sell/buy-derived winter head count.
  */
 export function calculateWorstCase(config: PlanConfig): WorstCaseScenario {
-  const headCount = config.head_count;
+  const springHeadCount = config.head_count;
 
-  // Worst case: max purchase price (base + $0.20/lb = base + $20/cwt) + min sale price
   const worstConfig = {
     ...config,
-    market_price_500lb: config.market_price_500lb + 20, // +$0.20/lb
-    market_price_850lb: config.sale_price_low_per_cwt,  // lowest sale price
+    market_price_500lb: config.market_price_500lb + 20,
+    market_price_850lb: config.sale_price_low_per_cwt,
   };
 
   const springWorst = calculateSpringTurn(worstConfig);
   const winterWorst = calculateWinterTurn(worstConfig);
-  const annualNet = (springWorst.netIncome * headCount) + (winterWorst.netIncome * headCount);
+
+  const springSellBuy = calculateSellBuy(springWorst, springHeadCount, worstConfig);
+  const winterHeadCount = springSellBuy.nextHeadCount;
+
+  const annualNet =
+    (springWorst.netIncome * springHeadCount) +
+    (winterWorst.netIncome * winterHeadCount);
 
   return {
     purchasePriceCwt: worstConfig.market_price_500lb,

@@ -308,6 +308,18 @@ export default async function PlanPage({ params }: PageProps) {
             <TableRow label="Marketing/Commission" value={formatCurrency(config.spring_marketing_commission_per_head)} indent />
             <TableRow label="Freight Out" value={formatCurrency(config.spring_freight_out_per_head)} indent />
             <TableRow label="Miscellaneous" value={formatCurrency(config.spring_misc_per_head)} indent />
+
+            {/* Feed Costs (spring-specific) */}
+            <SectionHeading>Feed Costs</SectionHeading>
+            <TableRow
+              label={`Hay Cost (${formatNumber(spring.hayConsumed)} lbs consumed)`}
+              value={formatCurrency(spring.hayCost)}
+              indent
+            />
+            <TableRow label={`Hay Waste (${formatPercent(config.hay_waste_pct, 0)})`} value={formatCurrency(spring.hayWaste)} indent />
+            <TableRow label="Commodity Cost" value={formatCurrency(spring.commodityCost)} indent />
+            <SubtotalRow label="Total Feed Cost" value={formatCurrency(spring.totalFeedCost)} />
+
             <SubtotalRow label="Subtotal Carrying Costs" value={formatCurrency(spring.carryingCosts)} />
 
             {/* Total Investment */}
@@ -341,6 +353,7 @@ export default async function PlanPage({ params }: PageProps) {
                 { label: 'Purchase Cost', value: spring.purchaseCost },
                 { label: 'Interest', value: spring.interestCost },
                 { label: 'Death Loss', value: spring.deathLoss },
+                { label: 'Feed Costs', value: spring.totalFeedCost },
                 { label: 'Health', value: config.spring_health_cost_per_head },
                 { label: 'Freight', value: config.spring_freight_in_per_head + config.spring_freight_out_per_head },
                 { label: 'Other', value: config.spring_mineral_cost_per_head + config.spring_lrp_premium_per_head + config.spring_marketing_commission_per_head + config.spring_misc_per_head },
@@ -441,7 +454,7 @@ export default async function PlanPage({ params }: PageProps) {
             <div className="grid md:grid-cols-3 gap-4">
               {/* Spring Net Total */}
               <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-500 mb-1">Spring</p>
+                <p className="text-sm text-gray-500 mb-1">Spring ({formatNumber(annual.springHeadCount)} head)</p>
                 <p
                   className={`text-xl font-bold ${
                     annual.springTotal >= 0 ? 'text-green-700' : 'text-red-600'
@@ -453,7 +466,7 @@ export default async function PlanPage({ params }: PageProps) {
 
               {/* Winter Net Total */}
               <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-500 mb-1">Winter</p>
+                <p className="text-sm text-gray-500 mb-1">Winter ({formatNumber(annual.winterHeadCount)} head)</p>
                 <p
                   className={`text-xl font-bold ${
                     annual.winterTotal >= 0 ? 'text-green-700' : 'text-red-600'
@@ -483,18 +496,105 @@ export default async function PlanPage({ params }: PageProps) {
                 </p>
               </div>
 
-              {/* Total Investment */}
+              {/* Total Investment (Spring Only) */}
               <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <p className="text-sm text-gray-500 mb-1">Total Investment</p>
+                <p className="text-sm text-gray-500 mb-1">Initial Capital (Spring)</p>
                 <p className="text-xl font-bold text-gray-900">
                   {formatCurrencyWhole(annual.totalInvestment)}
+                </p>
+              </div>
+
+              {/* Protected Margin */}
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-sm text-gray-500 mb-1">Total Protected Margin</p>
+                <p className="text-xl font-bold text-green-700">
+                  {formatCurrencyWhole(annual.totalProtectedMargin)}
                 </p>
               </div>
             </div>
 
             <p className="mt-4 text-sm text-gray-500">
-              Based on {formatNumber(config.head_count)} head
+              Spring: {formatNumber(annual.springHeadCount)} head | Winter: {formatNumber(annual.winterHeadCount)} head (derived from sell/buy)
             </p>
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Sell/Buy Marketing                                               */}
+        {/* ================================================================= */}
+        <section>
+          <h2 className="border-l-4 border-accent pl-4 text-2xl font-bold text-gray-900">
+            Sell/Buy Marketing
+          </h2>
+
+          <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg border border-gray-100 p-6">
+            <p className="text-sm text-gray-500 mb-4">
+              At each sale, {formatPercent(config.sell_buy_margin_pct)} of gross revenue is kept as protected margin.
+              The remaining {formatPercent(100 - config.sell_buy_margin_pct)} is reinvested into lighter replacement cattle.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* After Spring Sale */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-700 mb-3">After Spring Sale</h4>
+                <div className="space-y-0">
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Head Sold</span>
+                    <span className="font-medium text-gray-900">{formatNumber(annual.springSellBuy.headCount)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Gross Revenue</span>
+                    <span className="font-medium text-gray-900">{formatCurrencyWhole(annual.springSellBuy.totalGrossRevenue)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Protected Margin</span>
+                    <span className="font-medium text-green-700">{formatCurrencyWhole(annual.springSellBuy.protectedMargin)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Reinvestment Pool</span>
+                    <span className="font-medium text-gray-900">{formatCurrencyWhole(annual.springSellBuy.reinvestmentPool)}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Winter Head Count</span>
+                    <span className="font-bold text-accent">{formatNumber(annual.springSellBuy.nextHeadCount)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* After Winter Sale */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-700 mb-3">After Winter Sale</h4>
+                <div className="space-y-0">
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Head Sold</span>
+                    <span className="font-medium text-gray-900">{formatNumber(annual.winterSellBuy.headCount)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Gross Revenue</span>
+                    <span className="font-medium text-gray-900">{formatCurrencyWhole(annual.winterSellBuy.totalGrossRevenue)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Protected Margin</span>
+                    <span className="font-medium text-green-700">{formatCurrencyWhole(annual.winterSellBuy.protectedMargin)}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-gray-200 py-2">
+                    <span className="text-gray-600">Reinvestment Pool</span>
+                    <span className="font-medium text-gray-900">{formatCurrencyWhole(annual.winterSellBuy.reinvestmentPool)}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Next Spring Capacity</span>
+                    <span className="font-bold text-accent">{formatNumber(annual.winterSellBuy.nextHeadCount)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+              <p className="text-sm text-gray-500">Total Protected Margin (Annual)</p>
+              <p className="text-2xl font-bold text-green-700">
+                {formatCurrencyWhole(annual.totalProtectedMargin)}
+              </p>
+            </div>
           </div>
         </section>
 
@@ -522,7 +622,7 @@ export default async function PlanPage({ params }: PageProps) {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm text-gray-500 mb-1">Capital Required</p>
+                <p className="text-sm text-gray-500 mb-1">Initial Capital (Spring)</p>
                 <p className="text-xl font-bold text-gray-900">
                   {formatCurrencyWhole(annual.totalInvestment)}
                 </p>
@@ -595,6 +695,12 @@ export default async function PlanPage({ params }: PageProps) {
                     <td className="py-3 px-4 text-right text-green-600">{formatCurrency(scenarios.high.springNet)}</td>
                   </tr>
                   <tr className="border-t border-gray-100">
+                    <td className="py-3 px-4 text-gray-600">Winter Head Count</td>
+                    <td className="py-3 px-4 text-right text-red-600">{formatNumber(scenarios.low.winterHeadCount)}</td>
+                    <td className="py-3 px-4 text-right text-gray-900">{formatNumber(scenarios.mid.winterHeadCount)}</td>
+                    <td className="py-3 px-4 text-right text-green-600">{formatNumber(scenarios.high.winterHeadCount)}</td>
+                  </tr>
+                  <tr className="border-t border-gray-100 bg-gray-50/50">
                     <td className="py-3 px-4 text-gray-600">Winter Net/Head</td>
                     <td className="py-3 px-4 text-right text-red-600">{formatCurrency(scenarios.low.winterNet)}</td>
                     <td className="py-3 px-4 text-right text-gray-900">{formatCurrency(scenarios.mid.winterNet)}</td>
@@ -611,14 +717,14 @@ export default async function PlanPage({ params }: PageProps) {
             </div>
 
             <p className="mt-4 text-sm text-gray-500">
-              Annual figures based on {formatNumber(config.head_count)} head
+              Spring: {formatNumber(config.head_count)} head | Winter head count varies by scenario (derived from sell/buy)
             </p>
           </div>
 
           {/* Scenario Chart */}
           <div className="print-no-break mt-6 bg-white shadow-sm rounded-lg border border-gray-100 p-6">
             <h4 className="text-base font-semibold text-gray-700 mb-4">Scenario Comparison</h4>
-            <ScenarioChart scenarios={scenarios} headCount={config.head_count} />
+            <ScenarioChart scenarios={scenarios} />
           </div>
         </section>
 

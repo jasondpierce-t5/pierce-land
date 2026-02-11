@@ -76,46 +76,46 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate optional override fields
-    if (body.line_of_credit_override !== undefined && body.line_of_credit_override !== null) {
-      if (typeof body.line_of_credit_override !== 'number' || isNaN(body.line_of_credit_override)) {
+    if (body.override_loc_amount !== undefined && body.override_loc_amount !== null) {
+      if (typeof body.override_loc_amount !== 'number' || isNaN(body.override_loc_amount)) {
         return NextResponse.json(
-          { error: 'Field line_of_credit_override must be a valid number' },
+          { error: 'Field override_loc_amount must be a valid number' },
           { status: 400 }
         );
       }
-      if (body.line_of_credit_override <= 0) {
+      if (body.override_loc_amount <= 0) {
         return NextResponse.json(
-          { error: 'Field line_of_credit_override must be a positive number' },
-          { status: 400 }
-        );
-      }
-    }
-
-    if (body.interest_rate_pct_override !== undefined && body.interest_rate_pct_override !== null) {
-      if (typeof body.interest_rate_pct_override !== 'number' || isNaN(body.interest_rate_pct_override)) {
-        return NextResponse.json(
-          { error: 'Field interest_rate_pct_override must be a valid number' },
-          { status: 400 }
-        );
-      }
-      if (body.interest_rate_pct_override < 0 || body.interest_rate_pct_override > 100) {
-        return NextResponse.json(
-          { error: 'Field interest_rate_pct_override must be between 0 and 100' },
+          { error: 'Field override_loc_amount must be a positive number' },
           { status: 400 }
         );
       }
     }
 
-    if (body.total_head_override !== undefined && body.total_head_override !== null) {
-      if (!Number.isInteger(body.total_head_override)) {
+    if (body.override_interest_rate_pct !== undefined && body.override_interest_rate_pct !== null) {
+      if (typeof body.override_interest_rate_pct !== 'number' || isNaN(body.override_interest_rate_pct)) {
         return NextResponse.json(
-          { error: 'Field total_head_override must be a whole number' },
+          { error: 'Field override_interest_rate_pct must be a valid number' },
           { status: 400 }
         );
       }
-      if (body.total_head_override <= 0) {
+      if (body.override_interest_rate_pct < 0 || body.override_interest_rate_pct > 100) {
         return NextResponse.json(
-          { error: 'Field total_head_override must be a positive integer' },
+          { error: 'Field override_interest_rate_pct must be between 0 and 100' },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (body.override_head_count !== undefined && body.override_head_count !== null) {
+      if (!Number.isInteger(body.override_head_count)) {
+        return NextResponse.json(
+          { error: 'Field override_head_count must be a whole number' },
+          { status: 400 }
+        );
+      }
+      if (body.override_head_count <= 0) {
+        return NextResponse.json(
+          { error: 'Field override_head_count must be a positive integer' },
           { status: 400 }
         );
       }
@@ -128,9 +128,9 @@ export async function POST(request: NextRequest) {
         bank_name: body.bank_name.trim(),
         slug: body.slug,
         is_active: true,
-        line_of_credit_override: body.line_of_credit_override ?? null,
-        interest_rate_pct_override: body.interest_rate_pct_override ?? null,
-        total_head_override: body.total_head_override ?? null,
+        override_loc_amount: body.override_loc_amount ?? null,
+        override_interest_rate_pct: body.override_interest_rate_pct ?? null,
+        override_head_count: body.override_head_count ?? null,
       })
       .select()
       .single();
