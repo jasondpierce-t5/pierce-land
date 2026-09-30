@@ -16,3 +16,6 @@
 - **M2.1** `src/lib/domain/dates.ts` (ISO date math, America/Chicago conversion) and
   `dosing.ts` (weight source, 50-lb bracket, per-100-lb volume rounded up to 0.5 mL, site split,
   display string). 100% line coverage.
+- **M2.2** `fever.ts` (processing badges, NSAID condition; compared in tenths of °F),
+  `treatment.ts` (pull number per diagnosis, suggestions + beyond protocol, metaphylaxis status
+  and dialog text, same-class warnings), `types.ts` (shared enum lists with a contract test).

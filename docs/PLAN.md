@@ -40,7 +40,7 @@ Section references (§) are to `docs/SPEC.md`.
 ## M2 — Domain library (pure functions)
 
 - [x] **M2.1** `dosing.ts` — weight source, bracket, volume, sites (§5.1–5.2)
-- [ ] **M2.2** `fever.ts`, `treatment.ts` — flags, pull number, suggestions, metaphylaxis
+- [x] **M2.2** `fever.ts`, `treatment.ts` — flags, pull number, suggestions, metaphylaxis
   interval, same-class warning (§5.3–5.4)
 - [ ] **M2.3** `withdrawal.ts`, `inventory.ts` (§5.5–5.6)
 - [ ] **M2.4** `closeout.ts` with the golden case (§5.7); `groupGain.ts` (§5.8)

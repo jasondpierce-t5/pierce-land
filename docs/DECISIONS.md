@@ -17,3 +17,13 @@
   hundredths of a mL (label doses are `numeric(7,2)`), so 1.1 mL/cwt × 500 lb is exactly 5.5 mL
   rather than float 5.500000000000001 rounding up to 6.0. Weights are bracketed in tenths of a lb.
 - **2026-09-30 — `each`-unit products** (implants) always use 1 site and format as "1 each".
+- **2026-09-30 — Metaphylaxis day counter.** Day N = pull date − dose date (day 0 = day given);
+  "within interval" is N < X, so with X = 7 days 0–6 block and day 7 doesn't (matches the §10
+  test days 0/6/7/8). Voided and skipped doses don't count. If several windows cover the pull
+  date, the one ending latest is shown; if none, the most recent dose is shown for the side
+  panel's counter.
+- **2026-09-30 — Same-class lookback** is 0–14 days before the pull date inclusive, counting only
+  non-voided, non-skipped antimicrobial doses. One warning per suggested product, naming the
+  most recent prior product of that class.
+- **2026-09-30 — Conditional steps below threshold** are returned as `notIndicated` rather than
+  dropped, so the UI can show "Flunixin — not indicated (temp below 104.0 °F)".
