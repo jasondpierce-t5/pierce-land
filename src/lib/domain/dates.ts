@@ -50,6 +50,12 @@ export function chicagoDate(instant: Date | string): IsoDate {
   return chicagoFormatter.format(d);
 }
 
+/** A farm date from either a plain `YYYY-MM-DD` date or a timestamp. */
+export function toFarmDate(value: Date | string): IsoDate {
+  if (typeof value === "string" && ISO_DATE.test(value)) return assertIsoDate(value);
+  return chicagoDate(value);
+}
+
 /** ISO dates sort lexically, so the max is a string compare. */
 export function maxDate(dates: readonly IsoDate[]): IsoDate | null {
   let max: IsoDate | null = null;

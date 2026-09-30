@@ -1,0 +1,11 @@
+{
+  "description": "administration.withdrawal_clear_date = given_at (America/Chicago date) + slaughter_withdrawal_days. Shared by Vitest and pgTAP.",
+  "cases": [
+    { "given_at": "2026-10-01T15:00:00Z", "slaughter_withdrawal_days": 18, "expected_clear_date": "2026-10-19" },
+    { "given_at": "2026-10-02T03:30:00Z", "slaughter_withdrawal_days": 18, "expected_clear_date": "2026-10-19" },
+    { "given_at": "2026-10-02T05:30:00Z", "slaughter_withdrawal_days": 18, "expected_clear_date": "2026-10-20" },
+    { "given_at": "2026-12-20T18:00:00Z", "slaughter_withdrawal_days": 38, "expected_clear_date": "2027-01-27" },
+    { "given_at": "2027-01-15T05:59:00Z", "slaughter_withdrawal_days": 0, "expected_clear_date": "2027-01-14" },
+    { "given_at": "2026-10-20T14:00:00Z", "slaughter_withdrawal_days": 35, "expected_clear_date": "2026-11-24" }
+  ]
+}

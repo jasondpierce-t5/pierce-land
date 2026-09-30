@@ -19,3 +19,7 @@
 - **M2.2** `fever.ts` (processing badges, NSAID condition; compared in tenths of °F),
   `treatment.ts` (pull number per diagnosis, suggestions + beyond protocol, metaphylaxis status
   and dialog text, same-class warnings), `types.ts` (shared enum lists with a contract test).
+- **M2.3** `withdrawal.ts` (clear date in the Chicago time zone, animal/lot max, sale flags) and
+  `inventory.ts` (cost per administration, bottle problems, apply/restore dose, default bottle,
+  expiring and doses-on-hand queries). Shared fixtures `tests/fixtures/withdrawal.json` and
+  `administration_cost.json` are ready for the M2.5 pgTAP comparison.

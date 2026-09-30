@@ -27,3 +27,16 @@
   most recent prior product of that class.
 - **2026-09-30 — Conditional steps below threshold** are returned as `notIndicated` rather than
   dropped, so the UI can show "Flunixin — not indicated (temp below 104.0 °F)".
+- **2026-09-30 — Withdrawal date uses the farm time zone.** §4 writes `given_at::date`, but the DB
+  session runs in UTC, so an 10:30 pm CDT dose would land on the next day. The trigger (and TS)
+  use `(given_at at time zone 'America/Chicago')::date`, per §2. Fixture
+  `tests/fixtures/withdrawal.json` includes the late-evening case.
+- **2026-09-30 — A dose must fit in one bottle.** `remaining_ml < dose` blocks the save (the UI
+  prompts a bottle switch) rather than letting remaining go negative or splitting a dose across
+  bottles. Enforced by a `remaining_ml >= 0` check in the DB.
+- **2026-09-30 — Expiry boundary.** A bottle is usable on its expiration date and blocked from
+  the day after ("expiration_date before today" per §5.6).
+- **2026-09-30 — Dashboard stock queries.** "Expiring within 30 days" lists in-stock/open bottles
+  with expiration ≤ today + 30, including ones already past expiry that haven't been marked.
+  "Doses on hand" counts whole doses per usable bottle (a dose can't span bottles); low stock is
+  doses < the lot's head.

@@ -1,0 +1,13 @@
+{
+  "description": "administration.cost_cents = round(dose_ml × cost_cents / size_ml), half away from zero. Shared by Vitest and pgTAP.",
+  "cases": [
+    { "dose_ml": 5.5, "cost_cents": 32000, "size_ml": 500, "expected_cost_cents": 352 },
+    { "dose_ml": 4.5, "cost_cents": 18999, "size_ml": 250, "expected_cost_cents": 342 },
+    { "dose_ml": 1.5, "cost_cents": 300, "size_ml": 100, "expected_cost_cents": 5 },
+    { "dose_ml": 2.5, "cost_cents": 100, "size_ml": 200, "expected_cost_cents": 1 },
+    { "dose_ml": 2, "cost_cents": 4250, "size_ml": 100, "expected_cost_cents": 85 },
+    { "dose_ml": 30, "cost_cents": 45099, "size_ml": 500, "expected_cost_cents": 2706 },
+    { "dose_ml": 1, "cost_cents": 2599, "size_ml": 20, "expected_cost_cents": 130 },
+    { "dose_ml": 0.5, "cost_cents": 1, "size_ml": 1, "expected_cost_cents": 1 }
+  ]
+}
