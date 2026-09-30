@@ -24,7 +24,7 @@ Section references (§) are to `docs/SPEC.md`.
 
 ## M1 — Schema, RLS, seed
 
-- [ ] **M1.1** Migrations for all §4 tables, with enums, FKs, indexes, audit columns, and the
+- [~] **M1.1** Migrations for all §4 tables, with enums, FKs, indexes, audit columns, and the
   `updated_at` trigger.
 - [ ] **M1.2** RLS policies per §3; revoke DELETE on the protected tables; `void_record` RPC
   (§6).

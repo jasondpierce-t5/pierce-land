@@ -58,3 +58,22 @@
   `@electric-sql/pglite-pgtap`) with a stub of Supabase's auth schema/roles/grants. It is for fast
   feedback only; `npm run check` still runs `supabase test db`, and a task touching the DB isn't
   checked off in PLAN.md until that passes on the real stack.
+- **2026-09-30 — Schema details the spec leaves open (M1.1).**
+  - `animals.sex` is its own enum `heifer | steer | bull` (lots use `heifer | steer | mixed`); nullable.
+  - Active-tag uniqueness is case-insensitive (`lower(visual_tag)`); tags must be trimmed.
+  - Child rows reference parents by `(id, farm_id)` composite FKs so no row can point at another
+    farm's data; administrations also reference `(processing_event_id, animal_id)`,
+    `(treatment_id, animal_id)` and `(inventory_item_id, product_id)` so the event, animal, bottle,
+    and product always agree.
+  - `protocol_steps.session_kind` (null = any) added: the seeded processing protocol has separate
+    arrival and booster steps, which §4's column list can't express.
+  - `protocols.family_id` groups versions; one active version per family.
+  - `farms` holds the fever thresholds (§5.3 "settings"), defaults 104.0 / 105.0.
+  - `products.rx_only` is nullable: not in the §9 seed, so it stays unknown until the owner enters
+    it (no invented regulatory data).
+  - `inventory_items.discarded_at` / `discard_reason` added for "discard bottle (with reason)".
+  - A skipped administration has no bottle and must have a `skip_reason`; a given one must have a
+    bottle and `dose_ml`.
+  - One non-voided processing event per animal per session.
+  - Temps are range-checked 90–115 °F to catch keypad typos (data entry sanity, not clinical).
+  - Signed-in users can't set `created_at`/`created_by`; seeds (no `auth.uid()`) can.

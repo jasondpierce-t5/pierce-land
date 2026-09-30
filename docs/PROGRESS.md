@@ -26,3 +26,7 @@
 - **M2.4** `closeout.ts` (every §5.7 figure; golden case passes to the cent via
   `tests/fixtures/golden_closeout.json`, which e2e #6 should reuse), `format.ts` (display
   strings, "—" for null, real minus sign), `groupGain.ts` (§5.8 thresholds).
+- Added `npm run test:db:lite` (PGlite fallback, see DECISIONS) since Docker is still missing.
+- **M1.1** (`[~]` pending real stack) `supabase/migrations/20260930000100_schema.sql`: all §4
+  tables, enums, composite tenancy FKs, indexes, audit trigger; `supabase/tests/01_schema.test.sql`
+  (65 assertions) passes in PGlite. Mutation-checked the "every table/FK" assertions.
