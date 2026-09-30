@@ -12,13 +12,13 @@ Section references (§) are to `docs/SPEC.md`.
 
 ## M0 — Scaffold
 
-- [ ] **M0.1** Next.js + TS strict + Tailwind + shadcn/ui + ESLint (zero warnings).
+- [x] **M0.1** Next.js + TS strict + Tailwind + shadcn/ui + ESLint (zero warnings).
   `.env.example`, `.gitignore`.
-- [ ] **M0.2** `supabase init`; the local stack starts. Scripts from CLAUDE.md, including
+- [~] **M0.2** `supabase init`; the local stack starts. Scripts from CLAUDE.md, including
   `check`.
-- [ ] **M0.3** Vitest, Playwright (projects: tablet-landscape 1280×800 with `hasTouch`,
+- [~] **M0.3** Vitest, Playwright (projects: tablet-landscape 1280×800 with `hasTouch`,
   tablet-portrait 800×1280, phone 390×844), pgTAP harness. One smoke test each.
-- [ ] **M0.4** Create `docs/PROGRESS.md`, `BLOCKERS.md`, `DECISIONS.md`.
+- [x] **M0.4** Create `docs/PROGRESS.md`, `BLOCKERS.md`, `DECISIONS.md`.
 
 **Done when:** `npm run check` passes from a clean clone after `supabase start`.
 
@@ -39,7 +39,7 @@ Section references (§) are to `docs/SPEC.md`.
 
 ## M2 — Domain library (pure functions)
 
-- [ ] **M2.1** `dosing.ts` — weight source, bracket, volume, sites (§5.1–5.2)
+- [x] **M2.1** `dosing.ts` — weight source, bracket, volume, sites (§5.1–5.2)
 - [ ] **M2.2** `fever.ts`, `treatment.ts` — flags, pull number, suggestions, metaphylaxis
   interval, same-class warning (§5.3–5.4)
 - [ ] **M2.3** `withdrawal.ts`, `inventory.ts` (§5.5–5.6)

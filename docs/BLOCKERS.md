@@ -1,5 +1,16 @@
 # BLOCKERS
 
-- **Docker daemon unavailable** in the cloud container, so `supabase start`, `test:db`, and the
-  DB-backed e2e tests cannot run here. Needed from Jason: run on a machine with Docker Desktop.
-- **`ui.shadcn.com` blocked** by the container network policy; shadcn set up by hand (see DECISIONS.md).
+## Open
+
+- **2026-09-30 — Docker Desktop not installed on Jason's Windows machine.** WSL 2 is also
+  missing. Blocks `supabase start`, `test:db`, DB-backed e2e, and therefore verification of
+  M0.2, M0.3 (pgTAP part), all of M1, M2.5, and M3+.
+  Needed from Jason: `wsl --install --no-distribution` (admin) → reboot →
+  `winget install -e --id Docker.DockerDesktop` → start Docker Desktop. Walked through in chat.
+  Until then: M2 pure-TS work continues; `npm run check` runs green only through `test:unit`,
+  and `test:e2e` (smoke only) passes.
+
+## Resolved / historical
+
+- **ui.shadcn.com blocked** in the earlier cloud container; shadcn set up by hand (see
+  DECISIONS.md). Not an issue on Jason's machine.
