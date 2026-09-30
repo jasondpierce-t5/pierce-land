@@ -1,0 +1,40 @@
+{
+  "description": "SPEC §5.7 golden case. Used by the closeout unit test and the full-turn e2e (#6).",
+  "lot": {
+    "head_purchased": 50,
+    "pay_weight_total_lb": 22500,
+    "price_cents_per_cwt": 38000,
+    "freight_cents": 60000,
+    "commission_cents": 0,
+    "other_purchase_cents": 0,
+    "purchase_date": "2026-10-01"
+  },
+  "non_purchase_cost_cents": 1000000,
+  "head_dead": 1,
+  "sale": {
+    "head": 49,
+    "sale_date": "2027-03-01",
+    "sale_weight_total_lb": 31850,
+    "price_cents_per_cwt": 33000,
+    "commission_cents": 100000,
+    "freight_cents": 0,
+    "checkoff_cents": 0,
+    "other_cents": 0
+  },
+  "expected": {
+    "purchase_cost": "$86,100.00",
+    "lb_gained": "9,800.0",
+    "days_on_feed": "151",
+    "adg": "1.324 lb/day",
+    "cog": "$1.0204/lb",
+    "dead_purchase": "$1,722.00",
+    "cog_incl_death": "$1.1961/lb",
+    "total_cost": "$96,100.00",
+    "gross_sales": "$105,105.00",
+    "net_proceeds": "$104,105.00",
+    "breakeven_cwt": "$304.87",
+    "net_profit": "$8,005.00",
+    "profit_per_head_in": "$160.10",
+    "death_loss_pct": "2.0%"
+  }
+}

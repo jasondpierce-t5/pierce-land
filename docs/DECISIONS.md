@@ -28,7 +28,7 @@
 - **2026-09-30 — Conditional steps below threshold** are returned as `notIndicated` rather than
   dropped, so the UI can show "Flunixin — not indicated (temp below 104.0 °F)".
 - **2026-09-30 — Withdrawal date uses the farm time zone.** §4 writes `given_at::date`, but the DB
-  session runs in UTC, so an 10:30 pm CDT dose would land on the next day. The trigger (and TS)
+  session runs in UTC, so a 10:30 pm CDT dose would land on the next day. The trigger (and TS)
   use `(given_at at time zone 'America/Chicago')::date`, per §2. Fixture
   `tests/fixtures/withdrawal.json` includes the late-evening case.
 - **2026-09-30 — A dose must fit in one bottle.** `remaining_ml < dose` blocks the save (the UI
@@ -40,3 +40,15 @@
   with expiration ≤ today + 30, including ones already past expiry that haven't been marked.
   "Doses on hand" counts whole doses per usable bottle (a dose can't span bottles); low stock is
   doses < the lot's head.
+- **2026-09-30 — Golden ADG display (spec inconsistency).** 9,800 / 49 / 151 = 1.32450…, which
+  rounds to 1.325, but the §5.7 table says 1.324, while its other rows (e.g. breakeven 304.866 →
+  $304.87) are conventionally rounded. Choice: keep the exact value in `adgLb` and **display ADG
+  truncated to 3 decimals**, so the report matches the golden table. Jason: say if you'd rather
+  see 1.325.
+- **2026-09-30 — Closeout rounding.** Totals are integer cents: the purchase cost and each sale's
+  gross are rounded half away from zero, as is `dead_purchase`. Rates ($/lb, $/cwt, $/head,
+  lb/day) stay unrounded and are rounded only for display. Days on feed can be fractional with
+  several sales (head-weighted). Percentages are 0–1 fractions shown to one decimal.
+- **2026-09-30 — Group gain pairing.** Uses the last non-voided, non-blank tape weight per animal
+  in each session; sessions may be passed in either order; also reports the group-average daily
+  gain (group level only — individual ADG is never produced).

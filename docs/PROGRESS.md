@@ -23,3 +23,6 @@
   `inventory.ts` (cost per administration, bottle problems, apply/restore dose, default bottle,
   expiring and doses-on-hand queries). Shared fixtures `tests/fixtures/withdrawal.json` and
   `administration_cost.json` are ready for the M2.5 pgTAP comparison.
+- **M2.4** `closeout.ts` (every §5.7 figure; golden case passes to the cent via
+  `tests/fixtures/golden_closeout.json`, which e2e #6 should reuse), `format.ts` (display
+  strings, "—" for null, real minus sign), `groupGain.ts` (§5.8 thresholds).
