@@ -44,7 +44,7 @@ Section references (§) are to `docs/SPEC.md`.
   interval, same-class warning (§5.3–5.4)
 - [x] **M2.3** `withdrawal.ts`, `inventory.ts` (§5.5–5.6)
 - [x] **M2.4** `closeout.ts` with the golden case (§5.7); `groupGain.ts` (§5.8)
-- [ ] **M2.5** Shared fixtures; pgTAP tests proving the DB snapshots equal the TS results.
+- [~] **M2.5** Shared fixtures; pgTAP tests proving the DB snapshots equal the TS results.
 
 **Done when:** domain coverage is ≥95% and the golden case passes to the cent.
 

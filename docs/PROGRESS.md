@@ -48,3 +48,8 @@
   reason was NULL (a NULL check result counts as satisfied), so void/skip/discard reasons are
   now `coalesce(length(trim(x)), 0)`. Fixed in the M1.1 migration directly (never applied anywhere).
   pgTAP now covers every §10 Database item except the fixture comparison (M2.5).
+- **M2.5** (`[~]` pending real stack) `scripts/fixture-sql.mjs` (`npm run gen:fixtures`) renders
+  `tests/fixtures/*.json` into `supabase/tests/_fixtures.psql`; `07_snapshots.test.sql` inserts one
+  dose per case and compares `withdrawal_clear_date`/`cost_cents` to the same expectations the
+  Vitest domain tests use. `tests/unit/fixture-sql.test.ts` fails if the generated file is stale.
+- **M2 done criteria met:** 100% line coverage on `src/lib/domain`, golden case to the cent.
