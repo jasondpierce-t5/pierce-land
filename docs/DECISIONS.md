@@ -52,3 +52,9 @@
 - **2026-09-30 — Group gain pairing.** Uses the last non-voided, non-blank tape weight per animal
   in each session; sessions may be passed in either order; also reports the group-average daily
   gain (group level only — individual ADG is never produced).
+- **2026-09-30 — PGlite fallback DB test runner (not a stack substitution).** No Docker on this
+  machine or in cloud sessions, so `npm run test:db:lite` (`scripts/db-test-lite.mjs`) runs the
+  migrations, seeds, and the same pgTAP files in PGlite (WASM Postgres 18 +
+  `@electric-sql/pglite-pgtap`) with a stub of Supabase's auth schema/roles/grants. It is for fast
+  feedback only; `npm run check` still runs `supabase test db`, and a task touching the DB isn't
+  checked off in PLAN.md until that passes on the real stack.
