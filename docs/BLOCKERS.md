@@ -7,8 +7,8 @@
   M0.2, M0.3 (pgTAP part), all of M1, M2.5, and M3+.
   Needed from Jason: `wsl --install --no-distribution` (admin) → reboot →
   `winget install -e --id Docker.DockerDesktop` → start Docker Desktop. Walked through in chat.
-  Until then: M2 pure-TS work continues; `npm run check` runs green only through `test:unit`,
-  and `test:e2e` (smoke only) passes.
+  Until then: M2 is complete; M1 is written and passes in the PGlite fallback
+  (`npm run test:db:lite`). M3 onward needs the real stack (auth + e2e), so work is paused there.
 
 ## Resolved / historical
 

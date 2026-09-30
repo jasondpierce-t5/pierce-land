@@ -53,3 +53,16 @@
   dose per case and compares `withdrawal_clear_date`/`cost_cents` to the same expectations the
   Vitest domain tests use. `tests/unit/fixture-sql.test.ts` fails if the generated file is stale.
 - **M2 done criteria met:** 100% line coverage on `src/lib/domain`, golden case to the cent.
+
+### Where things stand (end of session 2) — STOPPED at gate 1 (environment)
+- Green here: `typecheck`, `lint`, `test:unit` (153 tests, 100% domain lines), `test:e2e` smoke
+  (3 viewports), and `test:db:lite` (8 pgTAP files, 304 assertions in PGlite).
+- Not yet run: `test:db` (`supabase test db`), `gen:types`, DB-backed e2e — all need Docker.
+- `[~]` tasks M0.2, M0.3, M1.1–M1.5, M2.5 are written and pass in PGlite; they get checked off
+  once `supabase start` → `db reset` → `npm run check` passes on the real stack.
+- **Next session, once Docker Desktop is running:**
+  1. `npx supabase start`, `npx supabase db reset`, `npm run gen:types`, `npm run check`.
+  2. Fix anything PGlite (Postgres 18) accepted that Supabase (Postgres 17 + GoTrue schema)
+     doesn't — most likely spots: `auth.users` columns in `seed.dev.sql`, `\ir` includes under
+     pg_prove, `alter default privileges` as the non-superuser `postgres` role.
+  3. Check off the `[~]` boxes, commit `src/lib/db/types.ts`, then start M3.1.
