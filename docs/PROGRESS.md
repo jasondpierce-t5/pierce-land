@@ -42,3 +42,9 @@
 - **M1.4** (`[~]` pending real stack) `supabase/seed.sql` (§9 exactly) and `seed.dev.sql` (users per
   role, outsider farm, golden closed lot, Demo Heifers, demo bottles); `config.toml` seeds both
   locally. `05_seed.test.sql` (27) checks every §9 value. Seeds verified idempotent.
+- **M1.5** (`[~]`: `gen:types` needs the local stack) `06_constraints.test.sql` (19): unique
+  active tag (case-insensitive; reusable after sold/dead/removed/voided; blocks re-activation),
+  data checks. **Found and fixed** a NULL hole: `length(trim(x)) > 0` checks passed when the
+  reason was NULL (a NULL check result counts as satisfied), so void/skip/discard reasons are
+  now `coalesce(length(trim(x)), 0)`. Fixed in the M1.1 migration directly (never applied anywhere).
+  pgTAP now covers every §10 Database item except the fixture comparison (M2.5).

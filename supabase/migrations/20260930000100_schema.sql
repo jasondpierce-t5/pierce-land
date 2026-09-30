@@ -170,7 +170,7 @@ create table public.animals (
   foreign key (sale_id, farm_id) references public.sales (id, farm_id),
   constraint animals_void_reason check (
     (voided_at is null and void_reason is null)
-    or (voided_at is not null and length(trim(void_reason)) >= 5)
+    or (voided_at is not null and coalesce(length(trim(void_reason)), 0) >= 5)
   )
 );
 -- §4: unique (farm_id, visual_tag) among active, non-voided animals (case-insensitive).
@@ -227,7 +227,7 @@ create table public.inventory_items (
   unique (id, product_id),
   foreign key (product_id, farm_id) references public.products (id, farm_id),
   check (remaining_ml >= 0 and remaining_ml <= size_ml),
-  check (status <> 'discarded' or length(trim(discard_reason)) > 0)
+  check (status <> 'discarded' or coalesce(length(trim(discard_reason)), 0) > 0)
 );
 create index inventory_items_farm_id_status_idx on public.inventory_items (farm_id, status);
 create index inventory_items_product_id_idx on public.inventory_items (product_id);
@@ -343,7 +343,7 @@ create table public.processing_events (
   check ((dose_weight_lb is null) = (dose_weight_source is null)),
   constraint processing_events_void_reason check (
     (voided_at is null and void_reason is null)
-    or (voided_at is not null and length(trim(void_reason)) >= 5)
+    or (voided_at is not null and coalesce(length(trim(void_reason)), 0) >= 5)
   )
 );
 create index processing_events_farm_id_idx on public.processing_events (farm_id);
@@ -380,7 +380,7 @@ create table public.treatments (
   foreign key (protocol_id, farm_id) references public.protocols (id, farm_id),
   constraint treatments_void_reason check (
     (voided_at is null and void_reason is null)
-    or (voided_at is not null and length(trim(void_reason)) >= 5)
+    or (voided_at is not null and coalesce(length(trim(void_reason)), 0) >= 5)
   )
 );
 create index treatments_farm_id_outcome_idx on public.treatments (farm_id, outcome);
@@ -430,11 +430,11 @@ create table public.administrations (
   -- A given dose needs a bottle and a volume; a skipped step records the reason and no bottle.
   constraint administrations_given_or_skipped check (
     (not skipped and inventory_item_id is not null and dose_ml is not null and skip_reason is null)
-    or (skipped and inventory_item_id is null and length(trim(skip_reason)) > 0)
+    or (skipped and inventory_item_id is null and coalesce(length(trim(skip_reason)), 0) > 0)
   ),
   constraint administrations_void_reason check (
     (voided_at is null and void_reason is null)
-    or (voided_at is not null and length(trim(void_reason)) >= 5)
+    or (voided_at is not null and coalesce(length(trim(void_reason)), 0) >= 5)
   )
 );
 create index administrations_farm_id_idx on public.administrations (farm_id);
