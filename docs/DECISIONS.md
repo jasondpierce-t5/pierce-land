@@ -110,3 +110,15 @@
     PLT01 metaphylaxis ack missing.
   - The PGlite runner pins `timezone = 'UTC'` like Supabase; without it the host's Central time
     zone hid a `given_at::date` bug in a mutation test.
+- **2026-09-30 — Seeds (M1.4).**
+  - `seed.sql` creates the farm "Pierce Land & Cattle" (fixed id `00000000-…-0001`) and its §9
+    catalog with fixed ids, idempotently (`on conflict do nothing`), so G1 can run it by hand.
+  - Flunixin "IV/IM neck": default route IV (first listed), site neck; the route is editable per
+    administration. `is_antimicrobial` is set for the macrolide, phenicol, and fluoroquinolone
+    (definitional from the class); `rx_only` and brand/vaccine active ingredients stay null.
+  - "Demo farm" in §9 is read as: the dev seed fills the seeded farm with demo data, plus a
+    separate "Neighbor Farm (dev)" owned by `outsider@pierce.test` for isolation checks.
+  - Dev users sign in with a dev-only password or a magic link via Mailpit.
+  - The golden lot is seeded as a *closed* turn (tags 101–150 sold/dead), so E2E #1 can still
+    create an active lot with tags 101–150. An active "Demo Heifers" lot (tags 201–250; 246–250
+    replacement candidates) and demo bottles support chute work and E2E #2.

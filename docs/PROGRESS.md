@@ -39,3 +39,6 @@
 - **M1.3** (`[~]` pending real stack) `20260930000300_triggers.sql` + `04_triggers.test.sql`
   (48): bottle defaults/decrement/restore, snapshots, pull number, metaphylaxis ack, death and
   sale status rules. Mutation-checked the time-zone and restore logic.
+- **M1.4** (`[~]` pending real stack) `supabase/seed.sql` (§9 exactly) and `seed.dev.sql` (users per
+  role, outsider farm, golden closed lot, Demo Heifers, demo bottles); `config.toml` seeds both
+  locally. `05_seed.test.sql` (27) checks every §9 value. Seeds verified idempotent.

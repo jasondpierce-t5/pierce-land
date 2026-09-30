@@ -32,7 +32,7 @@ Section references (§) are to `docs/SPEC.md`.
   - inventory decrement on insert, and restore on void (§5.6)
   - `cost_cents` and `withdrawal_clear_date` snapshots
   - animal status set by deaths and sales
-- [ ] **M1.4** `seed.sql` (§9) and `seed.dev.sql` (demo farm, one user per role, golden lot).
+- [~] **M1.4** `seed.sql` (§9) and `seed.dev.sql` (demo farm, one user per role, golden lot).
 - [ ] **M1.5** pgTAP suite per §10 (Database). `gen:types` committed.
 
 **Done when:** every table has an RLS-denied test, and the protected-delete tests pass.
