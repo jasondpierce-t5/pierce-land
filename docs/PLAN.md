@@ -26,7 +26,7 @@ Section references (§) are to `docs/SPEC.md`.
 
 - [~] **M1.1** Migrations for all §4 tables, with enums, FKs, indexes, audit columns, and the
   `updated_at` trigger.
-- [ ] **M1.2** RLS policies per §3; revoke DELETE on the protected tables; `void_record` RPC
+- [~] **M1.2** RLS policies per §3; revoke DELETE on the protected tables; `void_record` RPC
   (§6).
 - [ ] **M1.3** Triggers:
   - inventory decrement on insert, and restore on void (§5.6)

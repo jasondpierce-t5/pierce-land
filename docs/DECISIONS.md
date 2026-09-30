@@ -77,3 +77,20 @@
   - One non-voided processing event per animal per session.
   - Temps are range-checked 90–115 °F to catch keypad typos (data entry sanity, not clinical).
   - Signed-in users can't set `created_at`/`created_by`; seeds (no `auth.uid()`) can.
+- **2026-09-30 — RLS details (M1.2).**
+  - Hands may add and discard bottles (`inventory_items`): §3 gives them "inventory use", and
+    they're the ones opening a new box at the chute. Products, protocols, costs, sales, members,
+    and farm settings are owner-only.
+  - Farms are never created through the API (seeded, or by the service role).
+  - `anon` has no table privileges. DELETE is revoked everywhere, and new tables opt in
+    explicitly (default privileges revoked); owners may delete only `lot_costs`,
+    `protocol_steps`, and `farm_members`. The four protected tables also deny DELETE to
+    `service_role`.
+  - Direct UPDATE on `administrations` and `processing_events` is revoked; they change only
+    through `void_record`. Treatments allow updates to `outcome`, `recheck_date`, `notes`;
+    animals to their own details (not void columns). Voided rows are frozen by trigger, even for
+    the table owner.
+  - `void_record` is idempotent (voiding a voided row is a no-op, for outbox retries), trims the
+    reason, cascades from processing events and treatments to their administrations, and
+    returns "not found" (not "forbidden") to non-members so ids don't leak.
+  - Error codes: 22023 bad input, P0002 not found, 42501 not allowed, 55000 voided/immutable.

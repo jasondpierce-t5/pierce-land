@@ -1,0 +1,153 @@
+-- Shared pgTAP helpers, included from each test file with `\ir _helpers.psql`.
+-- (Not a .sql file, so pg_prove doesn't run it as a test.) Everything here is created inside the
+-- test's transaction and rolled back with it.
+
+create extension if not exists pgtap with schema extensions;
+create schema if not exists tests;
+grant usage on schema tests to anon, authenticated;
+
+create table if not exists tests.ids (key text primary key, id uuid not null);
+grant select on tests.ids to anon, authenticated;
+
+create or replace function tests.id(p_key text) returns uuid
+language plpgsql volatile as $$ -- volatile: never pre-evaluated by the planner with a stale snapshot
+declare v uuid;
+begin
+  select id into v from tests.ids where key = p_key;
+  if v is null then raise exception 'tests.id: unknown key %', p_key; end if;
+  return v;
+end;
+$$;
+
+create or replace function tests.remember(p_key text, p_id uuid) returns uuid
+language sql as $$
+  insert into tests.ids (key, id) values (p_key, p_id)
+  on conflict (key) do update set id = excluded.id
+  returning id
+$$;
+
+create or replace function tests.create_user(p_key text) returns uuid
+language sql as $$
+  with u as (
+    insert into auth.users (id, email, aud, role, raw_app_meta_data, raw_user_meta_data)
+    values (gen_random_uuid(), p_key || '@test.local', 'authenticated', 'authenticated', '{}', '{}')
+    returning id
+  )
+  select tests.remember(p_key, (select id from u))
+$$;
+
+-- Act as a signed-in user (like a PostgREST request with that user's JWT).
+create or replace function tests.authenticate_as(p_key text) returns void
+language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', tests.id(p_key), 'role', 'authenticated')::text, true);
+  perform set_config('role', 'authenticated', true);
+end;
+$$;
+
+-- Act as an unauthenticated API request.
+create or replace function tests.as_anon() returns void
+language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', '{"role":"anon"}', true);
+  perform set_config('role', 'anon', true);
+end;
+$$;
+
+-- Back to the test runner's own role (bypasses RLS as the table owner).
+create or replace function tests.as_postgres() returns void
+language plpgsql as $$
+begin
+  perform set_config('role', 'none', true);
+  perform set_config('request.jwt.claims', '', true);
+end;
+$$;
+
+-- A farm with one row in every table, plus a second farm, and users for each role:
+--   owner, hand, vet            → members of 'farm'
+--   outsider                    → owner of 'other_farm' only
+--   nobody                      → no membership at all
+create or replace function tests.seed_basic() returns void
+language plpgsql as $$
+declare
+  v_farm uuid := tests.remember('farm', gen_random_uuid());
+  v_other uuid := tests.remember('other_farm', gen_random_uuid());
+begin
+  perform tests.create_user(k) from unnest(array['owner', 'hand', 'vet', 'outsider', 'nobody']) k;
+
+  insert into public.farms (id, name) values (v_farm, 'Test Farm'), (v_other, 'Other Farm');
+  insert into public.farm_members (farm_id, user_id, role, display_name) values
+    (v_farm, tests.id('owner'), 'owner', 'Owner'),
+    (v_farm, tests.id('hand'), 'hand', 'Hand'),
+    (v_farm, tests.id('vet'), 'vet', 'Vet'),
+    (v_other, tests.id('outsider'), 'owner', 'Outsider');
+
+  insert into public.lots (id, farm_id, name, status, sex, risk_level, purchase_date, head_purchased,
+                           pay_weight_total_lb, price_cents_per_cwt, freight_cents)
+  values (tests.remember('lot', gen_random_uuid()), v_farm, 'Test Lot', 'active', 'heifer', 'high',
+          '2026-10-01', 50, 22500, 38000, 60000);
+
+  insert into public.animals (id, farm_id, lot_id, visual_tag, sex, arrival_date) values
+    (tests.remember('animal', gen_random_uuid()), v_farm, tests.id('lot'), '101', 'heifer', '2026-10-01'),
+    (tests.remember('animal_dead', gen_random_uuid()), v_farm, tests.id('lot'), '102', 'heifer', '2026-10-01'),
+    (tests.remember('animal_sold', gen_random_uuid()), v_farm, tests.id('lot'), '103', 'heifer', '2026-10-01');
+
+  insert into public.products (id, farm_id, name, drug_class, is_antimicrobial, dose_basis, dose_ml,
+                               route, default_site, max_ml_per_site, slaughter_withdrawal_days,
+                               post_metaphylaxis_interval_days)
+  values (tests.remember('product', gen_random_uuid()), v_farm, 'Test Macrolide', 'macrolide', true,
+          'per_100lb', 1.1, 'SC', 'neck', 10, 18, 7);
+
+  insert into public.inventory_items (id, farm_id, product_id, lot_number, expiration_date, size_ml,
+                                      remaining_ml, cost_cents)
+  values (tests.remember('bottle', gen_random_uuid()), v_farm, tests.id('product'), 'LOT-1',
+          '2099-12-31', 500, 500, 32000);
+
+  insert into public.protocols (id, farm_id, name, kind) values
+    (tests.remember('protocol', gen_random_uuid()), v_farm, 'Test Processing', 'processing'),
+    (tests.remember('tx_protocol', gen_random_uuid()), v_farm, 'Test Treatment', 'treatment');
+  insert into public.protocol_steps (id, farm_id, protocol_id, sequence, product_id, session_kind, pull_number)
+  values
+    (tests.remember('step', gen_random_uuid()), v_farm, tests.id('protocol'), 1, tests.id('product'), 'arrival', null),
+    (tests.remember('tx_step', gen_random_uuid()), v_farm, tests.id('tx_protocol'), 1, tests.id('product'), null, 1);
+
+  insert into public.processing_sessions (id, farm_id, lot_id, protocol_id, session_date, kind)
+  values (tests.remember('session', gen_random_uuid()), v_farm, tests.id('lot'), tests.id('protocol'),
+          '2026-10-01', 'arrival');
+  insert into public.session_bottles (session_id, product_id, inventory_item_id, farm_id)
+  values (tests.id('session'), tests.id('product'), tests.id('bottle'), v_farm);
+
+  insert into public.processing_events (id, farm_id, session_id, animal_id, temp_f, dose_weight_lb,
+                                        dose_weight_source, recorded_at, created_by)
+  values (tests.remember('event', gen_random_uuid()), v_farm, tests.id('session'), tests.id('animal'),
+          102.5, 450, 'lot_average', '2026-10-01T15:00:00Z', tests.id('hand'));
+
+  insert into public.administrations (id, farm_id, animal_id, product_id, inventory_item_id, dose_ml,
+                                      route, site, given_at, source, processing_event_id, created_by)
+  values (tests.remember('admin', gen_random_uuid()), v_farm, tests.id('animal'), tests.id('product'),
+          tests.id('bottle'), 5, 'SC', 'neck', '2026-10-01T15:00:00Z', 'processing', tests.id('event'),
+          tests.id('hand'));
+
+  insert into public.treatments (id, farm_id, animal_id, pulled_at, signs, temp_f, diagnosis, pull_number,
+                                 protocol_id, created_by)
+  values (tests.remember('treatment', gen_random_uuid()), v_farm, tests.id('animal'), '2026-10-12T15:00:00Z',
+          '{D,R}', 105.2, 'brd', 1, tests.id('tx_protocol'), tests.id('hand'));
+
+  insert into public.administrations (id, farm_id, animal_id, product_id, inventory_item_id, dose_ml,
+                                      route, site, given_at, source, treatment_id, created_by)
+  values (tests.remember('tx_admin', gen_random_uuid()), v_farm, tests.id('animal'), tests.id('product'),
+          tests.id('bottle'), 5, 'SC', 'neck', '2026-10-12T15:00:00Z', 'treatment', tests.id('treatment'),
+          tests.id('hand'));
+
+  insert into public.deaths (id, farm_id, animal_id, died_on, suspected_cause)
+  values (tests.remember('death', gen_random_uuid()), v_farm, tests.id('animal_dead'), '2026-10-20', 'BRD');
+
+  insert into public.lot_costs (id, farm_id, lot_id, cost_date, category, amount_cents)
+  values (tests.remember('lot_cost', gen_random_uuid()), v_farm, tests.id('lot'), '2026-10-15', 'hay', 125000);
+
+  insert into public.sales (id, farm_id, lot_id, sale_date, head, sale_weight_total_lb, price_cents_per_cwt)
+  values (tests.remember('sale', gen_random_uuid()), v_farm, tests.id('lot'), '2027-03-01', 1, 650, 33000);
+  update public.animals set sale_id = tests.id('sale') where id = tests.id('animal_sold');
+end;
+$$;

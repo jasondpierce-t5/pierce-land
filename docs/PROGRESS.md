@@ -30,3 +30,9 @@
 - **M1.1** (`[~]` pending real stack) `supabase/migrations/20260930000100_schema.sql`: all §4
   tables, enums, composite tenancy FKs, indexes, audit trigger; `supabase/tests/01_schema.test.sql`
   (65 assertions) passes in PGlite. Mutation-checked the "every table/FK" assertions.
+- **M1.2** (`[~]` pending real stack) `20260930000200_rls.sql`: membership helpers in `private`,
+  policies per §3, privilege revokes, void guards, `void_record` RPC. Tests
+  `02_rls.test.sql` (115) and `03_void.test.sql` (27) pass in PGlite; shared fixture builder in
+  `supabase/tests/_helpers.psql` (`tests.seed_basic()`, `tests.authenticate_as(key)`).
+  Gotcha: test helper `tests.id()` must be VOLATILE — a STABLE one gets pre-evaluated by the
+  planner against a stale snapshot inside plpgsql and raises "unknown key".
