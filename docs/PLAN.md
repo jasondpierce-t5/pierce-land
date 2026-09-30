@@ -28,7 +28,7 @@ Section references (§) are to `docs/SPEC.md`.
   `updated_at` trigger.
 - [~] **M1.2** RLS policies per §3; revoke DELETE on the protected tables; `void_record` RPC
   (§6).
-- [ ] **M1.3** Triggers:
+- [~] **M1.3** Triggers:
   - inventory decrement on insert, and restore on void (§5.6)
   - `cost_cents` and `withdrawal_clear_date` snapshots
   - animal status set by deaths and sales

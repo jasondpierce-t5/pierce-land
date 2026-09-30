@@ -7,7 +7,7 @@ create schema if not exists tests;
 grant usage on schema tests to anon, authenticated;
 
 create table if not exists tests.ids (key text primary key, id uuid not null);
-grant select on tests.ids to anon, authenticated;
+grant select, insert, update on tests.ids to anon, authenticated;
 
 create or replace function tests.id(p_key text) returns uuid
 language plpgsql volatile as $$ -- volatile: never pre-evaluated by the planner with a stale snapshot

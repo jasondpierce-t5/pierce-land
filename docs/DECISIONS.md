@@ -94,3 +94,19 @@
     reason, cascades from processing events and treatments to their administrations, and
     returns "not found" (not "forbidden") to non-members so ids don't leak.
   - Error codes: 22023 bad input, P0002 not found, 42501 not allowed, 55000 voided/immutable.
+- **2026-09-30 — Trigger design (M1.3).**
+  - Retries are `insert … on conflict do nothing`, and Postgres fires BEFORE ROW triggers even
+    for rows that then conflict. So BEFORE triggers only compute snapshots (cost, withdrawal date,
+    pull number), and everything that changes other rows or refuses the write (bottle checks and
+    decrement, metaphylaxis ack, death → status) runs AFTER INSERT. A test proves a retried dose
+    doesn't decrement twice. Raising in AFTER also means RLS denials win over business errors.
+  - Bottle expiry is judged against the dose's own farm date (`given_at` in Chicago), not "now".
+  - The post-metaphylaxis acknowledgement is enforced in the DB too (SQLSTATE PLT01), mirroring
+    `metaphylaxisStatus()`; the dialog is the UI half.
+  - Status rules: `dead` only via a death row (active animals only), `sold` only by linking
+    `sale_id` (owners only; unlinking returns the animal to active), `removed` needs a reason and
+    defaults `removal_date` to today; dead/sold can't be edited back.
+  - Custom SQLSTATEs: PLB01 bottle expired, PLB02 empty/discarded, PLB03 less than the dose,
+    PLT01 metaphylaxis ack missing.
+  - The PGlite runner pins `timezone = 'UTC'` like Supabase; without it the host's Central time
+    zone hid a `given_at::date` bug in a mutation test.

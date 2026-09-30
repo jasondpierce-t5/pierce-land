@@ -7,12 +7,12 @@ select tests.seed_basic();
 -- Extra fixtures: an owner-created animal, and a hand's treatment from 25 hours ago.
 insert into public.animals (id, farm_id, lot_id, visual_tag, created_by)
 values (tests.remember('owners_animal', gen_random_uuid()), tests.id('farm'), tests.id('lot'), '301', tests.id('owner'));
-insert into public.treatments (id, farm_id, animal_id, diagnosis, pull_number, created_by, created_at)
+insert into public.treatments (id, farm_id, animal_id, diagnosis, pull_number, created_by, created_at, pulled_at)
 values (tests.remember('old_treatment', gen_random_uuid()), tests.id('farm'), tests.id('animal'), 'pinkeye', 1,
-        tests.id('hand'), now() - interval '25 hours');
-insert into public.treatments (id, farm_id, animal_id, diagnosis, pull_number, created_by)
+        tests.id('hand'), now() - interval '25 hours', '2026-12-01T15:00:00Z');
+insert into public.treatments (id, farm_id, animal_id, diagnosis, pull_number, created_by, pulled_at)
 values (tests.remember('fresh_treatment', gen_random_uuid()), tests.id('farm'), tests.id('animal'), 'footrot', 1,
-        tests.id('hand'));
+        tests.id('hand'), '2026-12-01T15:00:00Z');
 
 select ok(not has_function_privilege('anon', 'public.void_record(text, uuid, text)', 'execute'),
   'anon cannot call void_record');

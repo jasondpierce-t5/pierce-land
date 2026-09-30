@@ -85,6 +85,7 @@ alter default privileges in schema public grant all on tables to anon, authentic
 alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
 alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
 set search_path = "$user", public, extensions;
+set timezone = 'UTC'; -- Supabase databases run in UTC
 `;
 
 function listSql(dir) {
